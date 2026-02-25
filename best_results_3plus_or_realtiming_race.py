@@ -26,6 +26,7 @@ License: [boazusa@hotmail.com]
 
 import os
 from datetime import datetime
+from pandas.io.sql import partial
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -66,19 +67,27 @@ class best_race_results_per_participant:
         if isinstance(y, float):
             return int(y)
         if isinstance(y, str):
-            if '/' in y:  # date format
+            y = y.strip()  # Ensure leading/trailing spaces are removed
+            if '/' in y:
                 parts = y.split('/')
-                year = int(parts[2])
-                if year < 100:
-                    year += 1900 if year > 25 else 2000
-                return year
+                try:
+                    if len(parts) >= 3:
+                        year = int(parts[2])
+                    elif len(parts) == 2:
+                        year = int(parts[1])  # e.g., MM/YYYY
+                    elif len(parts) == 1:
+                        year = int(parts[0])  # e.g., YYYY
+                    else:
+                        return None
+                    if year < 100:
+                        year += 1900 if year > 25 else 2000
+                    return year
+                except (ValueError, TypeError):
+                    return None
             try:
                 return int(y)
             except (ValueError, TypeError):
                 return None
-        if isinstance(y, pd.Timestamp):
-            return y.year
-        return None
 
     # 3plus event only
     def scrape_3plus_participants_table(self):
