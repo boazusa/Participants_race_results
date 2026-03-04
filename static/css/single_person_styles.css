@@ -1,17 +1,25 @@
 /* ============================= */
-/* ✅ DARK PAGE BACKGROUND        */
+/* ✅ DARK MODE GLOBAL */
 /* ============================= */
 
+[data-bs-theme="dark"] html,
 [data-bs-theme="dark"] body {
     background-color: #050505 !important;
     color: #ffffff !important;
 }
 
-/* כל ה-containers שיהיו כהים */
+/* כל הקונטיינרים */
 [data-bs-theme="dark"] .container,
 [data-bs-theme="dark"] .card {
     background-color: #0b0b0b !important;
     color: #ffffff !important;
+}
+
+/* Loading */
+[data-bs-theme="dark"] #loading {
+    background-color: #0f0f0f !important;
+    color: #ffffff !important;
+    border: 1px solid #222 !important;
 }
 
 /* ============================= */
@@ -28,12 +36,27 @@
     color: #ffffff !important;
 }
 
-/* Hover */
+/* שורות בסיס */
+[data-bs-theme="dark"] .table tbody tr {
+    background-color: #0f0f0f !important;
+}
+
+/* שורה זוגית */
+[data-bs-theme="dark"] .table tbody tr:nth-of-type(2n) {
+    background-color: #1c1c1c !important;
+}
+
+/* Hover תמיד מנצח */
 [data-bs-theme="dark"] .table tbody tr:hover {
     background-color: #2d2d2d !important;
 }
 
-/* תאים + Header */
+/* תאים – בלי background פנימי */
+[data-bs-theme="dark"] .table tbody tr td {
+    background-color: transparent !important;
+    color: #ffffff !important;
+}
+/* תאים */
 [data-bs-theme="dark"] .table td,
 [data-bs-theme="dark"] .table th {
     border-color: #2a2a2a !important;
@@ -41,9 +64,10 @@
     background-color: transparent !important;
 }
 
-/* Header מיוחד */
+/* Header */
 [data-bs-theme="dark"] .table thead th {
     background-color: #070707 !important;
+    color: #ffffff !important;
 }
 
 /* ============================= */
@@ -66,23 +90,10 @@
     color: #ffffff !important;
 }
 
-/* Manual Stripe – Fully Controlled */
-
-[data-bs-theme="dark"] #best-results-table tbody tr:nth-child(odd),
-[data-bs-theme="dark"] #all-results-table tbody tr:nth-child(odd) {
+[data-bs-theme="dark"] .table tbody tr {
     background-color: #0f0f0f !important;
 }
 
-[data-bs-theme="dark"] #best-results-table tbody tr:nth-child(even),
-[data-bs-theme="dark"] #all-results-table tbody tr:nth-child(even) {
-    background-color: #1c1c1c !important;
-}
-
-[data-bs-theme="dark"] #best-results-table tbody tr:hover,
-[data-bs-theme="dark"] #all-results-table tbody tr:hover {
-    background-color: #2e2e2e !important;
-}
-
-.dataframe tbody tr {
-    background-color: transparent !important;
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: #1a1a1a !important;
 }

@@ -211,13 +211,13 @@ success: function(response) {
         $('#best-results').html(response.best_table);
         $('#all-results').html(response.all_table);
         
-        $('.table tbody tr').each(function(index){
-            if(index % 2 === 0){
-                $(this).css('background-color', '#0f0f0f');
-            } else {
-                $(this).css('background-color', '#1c1c1c');
-            }
-        });
+        // $('.table tbody tr').each(function(index){
+        //     if(index % 2 === 0){
+        //         $(this).css('background-color', '#0f0f0f');
+        //     } else {
+        //         $(this).css('background-color', '#1c1c1c');
+        //     }
+        // });
         
         $('#result-count').text(`נמצאו ${response.result_count} תוצאות`);
         $('#results').show();
