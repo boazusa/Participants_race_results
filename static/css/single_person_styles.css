@@ -26,6 +26,10 @@
 /* ✅ FINAL CLEAN DARK TABLE     */
 /* ============================= */
 
+/* ============================= */
+/* ✅ CLEAN TABLE DARK MODE */
+/* ============================= */
+
 [data-bs-theme="dark"] .table {
     --bs-table-bg: #0f0f0f;
     --bs-table-border-color: #2a2a2a;
@@ -33,6 +37,34 @@
     --bs-table-striped-bg: #1c1c1c;
     --bs-table-hover-bg: #2d2d2d;
 
+    background-color: #0f0f0f !important;
+    color: #ffffff !important;
+}
+
+/* Header */
+[data-bs-theme="dark"] .table thead th {
+    background-color: #070707 !important;
+    color: #ffffff !important;
+}
+
+/* Rows */
+[data-bs-theme="dark"] .table tbody tr {
+    background-color: #0f0f0f !important;
+}
+
+[data-bs-theme="dark"] .table tbody tr:nth-of-type(2n) {
+    background-color: #1c1c1c !important;
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: #2d2d2d !important;
+}
+
+/* Cells */
+[data-bs-theme="dark"] .table td,
+[data-bs-theme="dark"] .table th {
+    border-color: #2a2a2a !important;
+    background-color: transparent !important;
     color: #ffffff !important;
 }
 
