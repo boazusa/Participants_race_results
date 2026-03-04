@@ -1,5 +1,5 @@
 :root {
-    --bg-color: #ffffff;
+    --bg-color: #e8e8e8;
     --text-color: #212529;
     --card-bg: #f8f9fa;
     --table-bg: #ffffff;
@@ -8,7 +8,7 @@
 }
 
 [data-theme="dark"] {
-    --bg-color: #121212;
+    --bg-color: #1e3a5f;
     --text-color: #f8f9fa;
     --card-bg: #1e1e1e;
     --table-bg: #2d2d2d;
@@ -16,197 +16,406 @@
     --border-color: #444;
 }
 
-/* Dark mode table styling */
-[data-theme="dark"] .table {
-    --bs-table-bg: var(--table-bg) !important;
-    --bs-table-striped-bg: var(--table-bg) !important;
-    --bs-table-striped-color: var(--text-color) !important;
-    --bs-table-active-bg: var(--table-hover) !important;
-    --bs-table-hover-bg: var(--table-hover) !important;
-    --bs-table-hover-color: var(--text-color) !important;
-    color: var(--text-color) !important;
-    border-color: var(--border-color) !important;
-}
-
-/* Ensure all table rows are visible in dark mode */
-[data-theme="dark"] .table > :not(caption) > * > * {
-    color: var(--text-color) !important;
-    background-color: var(--table-bg) !important;
-    border-color: var(--border-color) !important;
-}
-
-/* Remove Bootstrap's striped effect in dark mode and ensure all rows are visible */
-[data-theme="dark"] .table-striped > tbody > tr {
-    --bs-table-accent-bg: var(--table-bg) !important;
-    color: var(--text-color) !important;
-    background-color: var(--table-bg) !important;
-}
-
-[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > *,
-[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(even) > * {
-    --bs-table-accent-bg: var(--table-bg) !important;
-    color: var(--text-color) !important;
-    background-color: var(--table-bg) !important;
-}
-
-/* Style for table headers */
-[data-theme="dark"] .table thead th {
-    background-color: var(--card-bg) !important;
-    color: var(--text-color) !important;
-    border-bottom-color: var(--border-color) !important;
-}
-
-/* Style for table cells */
-[data-theme="dark"] .table td {
-    border-color: var(--border-color);
-}
-
-/* Hover effect for table rows */
-[data-theme="dark"] .table-hover tbody tr:hover {
-    --bs-table-accent-bg: var(--table-hover) !important;
-    background-color: var(--table-hover) !important;
-    color: var(--text-color) !important;
-}
-
-/* Ensure table cells have consistent background */
-[data-theme="dark"] .table td,
-[data-theme="dark"] .table th {
-    background-color: var(--table-bg) !important;
-}
-
-/* Adjust column widths and padding */
-.table td, .table th {
-    padding: 0.75rem 1rem !important;
-}
-
-/* Make the time column narrower */
-.table td:last-child,
-.table th:last-child {
-    width: 100px;  /* Fixed width for time column */
-    min-width: 100px;
-    max-width: 100px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Table styles */
-.table {
-    table-layout: fixed;
-    font-size: 1em; /* Ensure consistent font size */
-    width: 100%;
-}
-
-/* Make the date column (תאריך אירוע) wider */
-.table td:first-child,
-.table th:first-child {
-    width: 150px !important;  /* Increased from default */
-    min-width: 120px !important;
-    max-width: 150px !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Make the race name column (שם מרוץ) 3x wider */
-.table td:nth-child(3),
-.table th:nth-child(3) {
-    min-width: 450px !important;  /* 3x wider */
-    max-width: 600px !important;
-    white-space: normal !important;
-    word-break: break-word;
-}
-
-/* Make the מקצה column 1/3 of its current width */
-.table td:nth-last-child(2),
-.table th:nth-last-child(2) {
-    width: 30px !important;
-    min-width: 30px !important;
-    max-width: 30px !important;
-    padding: 0.5rem 0.25rem !important;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Add padding to other columns */
-.table td:not(:last-child):not(:nth-last-child(2)),
-.table th:not(:last-child):not(:nth-last-child(2)) {
-    padding-right: 1.5rem !important;
-}
-
-/* Make other columns more compact */
-.table td:not(:nth-child(3)),
-.table th:not(:nth-child(3)) {
-    white-space: nowrap;
-}
-
-/* Add more padding to other columns */
-.table td:not(:last-child),
-.table th:not(:last-child) {
-    padding-right: 1.5rem !important;
-}
+/* ---------- Base Layout ---------- */
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    transition: background-color 0.3s, color 0.3s;
+    transition: 0.3s ease;
     padding: 20px;
     min-height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    background: var(--bg-color);
 }
 
-.card, .form-control, .table, .table th, .table td {
+.card,
+.form-control,
+.table {
     background-color: var(--card-bg);
     color: var(--text-color);
     border-color: var(--border-color);
 }
 
+/* ---------- Table ---------- */
+
+.table {
+    width: 100%;
+    table-layout: auto;   /* IMPORTANT - prevents gaps */
+    font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+    padding: 0.5rem 0.6rem;  /* Tight spacing */
+    border-color: var(--border-color);
+    white-space: nowrap;
+}
+
+/* Curved corners for table */
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Gap below loading section */
+#loading {
+    margin-bottom: 20px;  /* Adjust value for desired gap */
+}
+
+/* Allow race name column to wrap (adjust if needed) */
+.table td:nth-child(4),
+.table th:nth-child(4) {
+    white-space: normal;
+    word-break: break-word;
+    max-width: 350px;
+}
+
+/* Remove artificial spacing between columns */
+.table th,
+.table td {
+    margin: 0;
+}
+
+/* Hover */
 .table-hover tbody tr:hover {
     background-color: var(--table-hover);
 }
 
-.result-section { 
-    margin-bottom: 30px; 
+/* ---------- Dark Mode Table Fix ---------- */
+
+[data-theme="dark"] .table,
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+    background-color: var(--table-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
 }
 
-.loading { 
-    display: none; 
-    text-align: center; 
-    margin: 20px 0; 
+[data-theme="dark"] .table-hover tbody tr:hover {
+    background-color: var(--table-hover) !important;
 }
 
-#result-count { 
-    font-weight: bold; 
-    margin: 10px 0; 
+/* ---------- Responsive ---------- */
+
+.table-responsive {
+    overflow-x: auto;
 }
 
-/* Make the race name column (4th column) wider */
-.table td:nth-child(4),
-.table th:nth-child(4) {
-    min-width: 400px !important;
-    max-width: 400px !important;
-    width: 400px !important;
-    white-space: normal !important;
-    word-break: break-word;
-}
+/* ---------- Theme Toggle Button ---------- */
 
-/* Make other columns more compact */
-.table td:not(:nth-child(4)),
-.table th:not(:nth-child(4)) {
-    white-space: nowrap;
-    width: auto;
-}
-
-/* Theme toggle button */
 #theme-toggle {
     position: fixed;
     top: 20px;
     left: 20px;
     z-index: 1000;
-    transition: all 0.3s ease;
+    transition: 0.3s ease;
 }
 
-.table-responsive {
+/* ---------- GUI Decorations ---------- */
+
+/* Global styles */
+
+
+/* [data-theme="dark"] {
+    --bg-color: #0b0b0b;
+} */
+
+/* Header with gradient */
+.header-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-section h2 {
+    margin: 0;
+    font-weight: 700;
+}
+
+/* Form card enhancements */
+.card {
+    background: var(--card-bg);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    transition: transform 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border: none;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Loading spinner */
+#loading {
+    background: var(--card-bg);
+    color: #000;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] #loading {
+    background: var(--card-bg);
+}
+
+/* Theme toggle button enhancements */
+#theme-toggle {
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+#theme-toggle:hover {
+    background: #6c757d;
+    color: white;
+    transform: scale(1.05);
+}
+
+body:not(.theme-dark) #theme-toggle {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================= */
+/* STARTUP STYLE UI */
+/* ============================= */
+
+.app-wrapper {
+    max-width: 900px;
+    margin: auto;
+    padding: 40px 20px;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.hero h1 {
+    font-weight: 700;
+    font-size: 36px;
+}
+
+.hero p {
+    opacity: 0.6;
+}
+
+/* Glass Card */
+.glass-card {
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+/* Sections */
+.section {
+    margin-bottom: 25px;
+}
+
+.section h4 {
+    margin-bottom: 15px;
+}
+
+/* Inputs */
+.modern-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    margin-bottom: 12px;
+    background: #f1f1f1;
+}
+
+/* Grid */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* Button */
+.modern-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg,#007bff,#00c6ff);
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.modern-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Results */
+.results-card {
+    margin-top: 50px;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.results-card h2 {
+    text-align: center;
+}
+
+.table-container {
     overflow-x: auto;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 60px;
+    opacity: 0.6;
+}
+
+.theme-toggle-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1);
+}
+
+.download-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 14px;
+    background: linear-gradient(135deg,#28a745,#20c997);
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.download-btn:hover {
+    transform: translateY(-3px);
+    color: white;
+}
+
+/* Download Button */
+.download-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg,#28a745,#20c997);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.download-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    color: white;
+}
+
+.download-wrapper {
+    text-align: center;
+    margin-top: 30px;
+}
+
+[data-theme="dark"] .glass-card {
+    background: rgba(30,30,30,0.9);
+    border: 1px solid #333;
+}
+
+[data-theme="dark"] .results-card {
+    background: #1e1e1e;
+    border: 1px solid #333;
+}
+
+[data-theme="dark"] .table {
+    background-color: #1e1e1e !important;
+    border: 1px solid #333 !important;
+}
+
+[data-theme="dark"] .table th {
+    background-color: #2a2a2a !important;
+}
+
+#loading {
+    display: none;
+    position: relative;
+    z-index: 10;
+}
+
+[data-theme="dark"] #loading {
+    background: #1a1a1a !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #333 !important;
+}
+
+[data-theme="dark"] .glass-card,
+[data-theme="dark"] .results-card {
+    background: #1c1c1c !important;
+    border: 1px solid #333 !important;
+}
+
+[data-theme="dark"] .modern-input {
+    background: #2a2a2a !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #444 !important;
+}
+
+[data-theme="dark"] .modern-input::placeholder {
+    color: #aaa;
+}
+
+[data-theme="dark"] {
+    --bg-color: #04072a;
+    --text-color: #f8f9fa;
+}
+
+[data-theme="light"] {
+    --bg-color: #e8e8e8;
+    --text-color: #212529;
+}
+
+html, body {
+    background-color: var(--bg-color) !important;
 }

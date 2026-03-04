@@ -112,7 +112,8 @@ def index():
             "index.html",
             table_html=top10,
             download_link=output_file,
-            done=True
+            done=True,
+            race_name=race_name
         )
 
     return render_template("index.html", done=False)
