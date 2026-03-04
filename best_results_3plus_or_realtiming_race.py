@@ -10,8 +10,8 @@ Author: Boaz Bilgory
 Email: boazusa@hotmail.com
 Organization: self
 Created: 15/11/2025
-Last Modified: 24/11/2025
-Version: 1.0.0
+Last Modified: 04/03/2025
+Version: 1.0.1
 Python Version: 3.8+
 Dependencies:
     - pandas >= 1.3.0

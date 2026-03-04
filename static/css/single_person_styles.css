@@ -1,0 +1,88 @@
+/* ============================= */
+/* ✅ DARK PAGE BACKGROUND        */
+/* ============================= */
+
+[data-bs-theme="dark"] body {
+    background-color: #050505 !important;
+    color: #ffffff !important;
+}
+
+/* כל ה-containers שיהיו כהים */
+[data-bs-theme="dark"] .container,
+[data-bs-theme="dark"] .card {
+    background-color: #0b0b0b !important;
+    color: #ffffff !important;
+}
+
+/* ============================= */
+/* ✅ FINAL CLEAN DARK TABLE     */
+/* ============================= */
+
+[data-bs-theme="dark"] .table {
+    --bs-table-bg: #0f0f0f;
+    --bs-table-border-color: #2a2a2a;
+    --bs-table-color: #ffffff;
+    --bs-table-striped-bg: #1c1c1c;
+    --bs-table-hover-bg: #2d2d2d;
+
+    color: #ffffff !important;
+}
+
+/* Hover */
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: #2d2d2d !important;
+}
+
+/* תאים + Header */
+[data-bs-theme="dark"] .table td,
+[data-bs-theme="dark"] .table th {
+    border-color: #2a2a2a !important;
+    color: #ffffff !important;
+    background-color: transparent !important;
+}
+
+/* Header מיוחד */
+[data-bs-theme="dark"] .table thead th {
+    background-color: #070707 !important;
+}
+
+/* ============================= */
+/* ✅ DARK LOADING BOX FIX       */
+/* ============================= */
+
+[data-bs-theme="dark"] #loading {
+    background-color: #0f0f0f !important;
+    color: #ffffff !important;
+    border: 1px solid #2a2a2a !important;
+}
+
+/* אם זה בתוך card – נדרוס גם אותו */
+[data-bs-theme="dark"] #loading.card {
+    background-color: #0f0f0f !important;
+}
+
+/* טקסט פנימי */
+[data-bs-theme="dark"] #loading * {
+    color: #ffffff !important;
+}
+
+/* Manual Stripe – Fully Controlled */
+
+[data-bs-theme="dark"] #best-results-table tbody tr:nth-child(odd),
+[data-bs-theme="dark"] #all-results-table tbody tr:nth-child(odd) {
+    background-color: #0f0f0f !important;
+}
+
+[data-bs-theme="dark"] #best-results-table tbody tr:nth-child(even),
+[data-bs-theme="dark"] #all-results-table tbody tr:nth-child(even) {
+    background-color: #1c1c1c !important;
+}
+
+[data-bs-theme="dark"] #best-results-table tbody tr:hover,
+[data-bs-theme="dark"] #all-results-table tbody tr:hover {
+    background-color: #2e2e2e !important;
+}
+
+.dataframe tbody tr {
+    background-color: transparent !important;
+}

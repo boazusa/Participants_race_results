@@ -27,7 +27,7 @@ import pandas as pd
 import os
 from Single_person_results_w_top_results import fetch_and_process_results
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 @app.route("/")
 def index():
@@ -117,18 +117,18 @@ def get_results():
         # Convert DataFrames to HTML tables with custom styling
         def format_table(df, table_id):
             return df.to_html(
-                classes="table table-striped table-bordered table-hover",
+                classes="table table-striped table-hover",
                 index=False,
                 table_id=table_id,
                 border=0,
                 justify='right',
                 na_rep='',
                 formatters={
-                    'תאריך אירוע': lambda x: f'<div style="width: 100px; min-width: 100px; max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0.5rem;">{x}</div>',
-                    'שם': lambda x: f'<div style="min-width: 120px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0.5rem;">{x}</div>',
-                    'שם מרוץ': lambda x: f'<div style="min-width: 600px; max-width: 800px; white-space: normal; word-break: break-word; padding: 0.5rem;">{x}</div>',
-                    'מקצה': lambda x: f'<div style="width: 50px; min-width: 50px; max-width: 50px; text-align: center; padding: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{x}</div>',
-                    'זמן': lambda x: f'<div style="width: 80px; min-width: 80px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0.5rem;">{x}</div>'
+                    'תאריך אירוע': lambda x: x,
+                    'שם': lambda x: x,
+                    'שם מרוץ': lambda x: x,
+                    'מקצה': lambda x: x,
+                    'זמן': lambda x: x,
                 },
                 escape=False
             )

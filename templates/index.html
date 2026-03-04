@@ -59,7 +59,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
         }
 
         /* Theme styles */
-        body.theme-dark {
+        /* body.theme-dark {
             background-color: #121212 !important;
             color: #f5f5f5;
         }
@@ -79,7 +79,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             background-color: #1e1e1e !important;
             color: #f5f5f5 !important;
             border-color: #555 !important;
-        }
+        } */
 
         body.theme-dark .table thead th {
             background-color: #2f2f2f !important;
@@ -119,6 +119,8 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
     <script>
         let loadingTimerInterval;
         let loadingStartTime;
+        let overlayTimerInterval;
+        let overlayStartTime;
 
         function setLoadingStep(stepNumber) {
             const steps = [
@@ -138,9 +140,20 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
         }
 
         function startLoading() {
+            document.getElementById("loading-overlay").style.display = "flex";
             const loadingEl = document.getElementById("loading");
             const secondsEl = document.getElementById("loading-seconds");
             const submitBtn = document.getElementById("submit-button");
+
+            // ⏱ Start overlay timer
+            overlayStartTime = Date.now();
+            overlayTimerInterval = setInterval(function () {
+                const elapsed = (Date.now() - overlayStartTime) / 1000;
+                const timeEl = document.getElementById("overlay-time");
+                if (timeEl) {
+                    timeEl.textContent = elapsed.toFixed(1);
+                }
+            }, 100);
 
             if (loadingEl) {
                 loadingEl.style.display = "block";
@@ -148,7 +161,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.textContent = "Running...";
+                submitBtn.textContent = "...Running";
             }
 
             if (secondsEl) {
@@ -164,6 +177,30 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             setLoadingStep(1);
             setTimeout(function () { setLoadingStep(2); }, 1500);
             setTimeout(function () { setLoadingStep(3); }, 3000);
+
+            let progress = 0;
+            const progressBar = document.getElementById("progress-fill");
+            const stepText = document.getElementById("overlay-step");
+
+            overlayTimerInterval = setInterval(function () {
+
+                progress += 1;
+
+                if (progress <= 30) {
+                    stepText.textContent = "...Scraping participants";
+                } else if (progress <= 60) {
+                    stepText.textContent = "...Filtering runners";
+                } else {
+                    stepText.textContent = "...Calculating best results";
+                }
+
+                if (progressBar) {
+                    progressBar.style.width = progress + "%";
+                }
+
+                if (progress >= 100) progress = 0;
+
+            }, 300);
         }
 
         function applySavedTheme() {
@@ -180,7 +217,12 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
             const toggleBtn = document.getElementById("theme-toggle");
             if (toggleBtn) {
-                toggleBtn.textContent = saved === "dark" ? "Light mode" : "Dark mode";
+                // toggleBtn.textContent = saved === "dark" ? "Light mode" : "Dark mode";
+                // toggleBtn.textContent = saved === "dark" ? "☀️" : "🌙";
+                toggleBtn.innerHTML =
+                    saved === "dark"
+                        ? '<i class="fas fa-sun"></i>'
+                        : '<i class="fas fa-moon"></i>';
             }
         }
 
@@ -193,7 +235,12 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
             const toggleBtn = document.getElementById("theme-toggle");
             if (toggleBtn) {
-                toggleBtn.textContent = newTheme === "dark" ? "Light mode" : "Dark mode";
+                // toggleBtn.textContent = newTheme === "dark" ? "Light mode" : "Dark mode";
+                // toggleBtn.textContent = newTheme === "dark" ? "☀️" : "🌙";
+                toggleBtn.innerHTML =
+                    newTheme === "dark"
+                        ? '<i class="fas fa-sun"></i>'
+                        : '<i class="fas fa-moon"></i>';
             }
         }
 
@@ -203,6 +250,20 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             if (toggleBtn) {
                 toggleBtn.addEventListener("click", toggleTheme);
             }
+
+            window.addEventListener("load", function () {
+                if (overlayTimerInterval) {
+                    clearInterval(overlayTimerInterval);
+                }
+            });
+
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+            }, true);
         });
     </script>
 </head>
@@ -211,13 +272,15 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
 <div class="app-wrapper">
 
+    <button id="theme-toggle" class="theme-toggle-btn">
+        <i class="fas fa-moon"></i>
+    </button>
+
     <!-- HEADER -->
     <div class="hero">
         <h1>🏃 Best Race Results</h1>
         <p>Professional Race Analytics Platform</p>
-        <button id="theme-toggle" class="btn btn-light btn-sm">
-            Dark Mode
-        </button>
+        
     </div>
 
     <!-- MAIN CARD -->
@@ -292,13 +355,13 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
         <div class="mt-2">
             <div id="loading-step-1" class="loading-step">
-                Scraping participants...
+                ...Scraping participants
             </div>
             <div id="loading-step-2" class="loading-step">
-                Filtering runners...
+                ...Filtering runners
             </div>
             <div id="loading-step-3" class="loading-step">
-                Calculating best results...
+                ...Calculating best results
             </div>
         </div>
     </div>
@@ -328,10 +391,45 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
     <!-- FOOTER -->
     <div class="footer">
         Built by <strong>Boaz Bilgory</strong> |
-        Version 1.0.0
+        Version 1.0.1
     </div>
 
 </div>
 
 </body>
+
+<div id="loading-overlay">
+    <div class="loader-box">
+
+        <i class="fas fa-spinner fa-spin"></i>
+        <div class="loader-spinner"></div>
+
+        <h3>Processing Data</h3>
+
+        <div class="loading-status">
+            <span id="overlay-step">...Initializing</span>
+        </div>
+
+        <div class="loading-time">
+            ⏱ <span id="overlay-time">0.0</span> seconds
+        </div>
+
+        <div class="loading-progress-bar">
+            <div id="progress-fill"></div>
+        </div>
+
+    </div>
+</div>
+
 </html>
+
+<!-- <div id="loading-overlay">
+    <div class="loader-box">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>...Processing</p>
+        <p>
+            Elapsed:
+            <span id="overlay-time">0.0</span>s
+        </p>
+    </div>
+</div> -->
