@@ -95,8 +95,8 @@
 </head>
 <body>
     <!-- Theme Toggle Button -->
-    <button id="theme-toggle" class="btn btn-sm btn-outline-secondary">
-        <i class="bi bi-moon-fill"></i> Dark Mode
+    <button id="theme-toggle" aria-label="Toggle theme">
+        <i class="bi bi-moon-fill"></i>
     </button>
 
     <div class="container mt-4">
@@ -159,11 +159,11 @@
             // Apply the theme
             function applyTheme(theme) {
                 if (theme === 'dark') {
-                    document.documentElement.setAttribute("data-bs-theme", theme);
-                    themeToggle.html('<i class="bi bi-sun-fill"></i> Light Mode');
+                    document.documentElement.setAttribute("data-bs-theme", "dark");
+                    themeToggle.html('<i class="bi bi-sun-fill"></i>');
                 } else {
-                    $('html').attr('data-bs-theme', 'light');
-                    themeToggle.html('<i class="bi bi-moon-fill"></i> Dark Mode');
+                    document.documentElement.setAttribute("data-bs-theme", "light");
+                    themeToggle.html('<i class="bi bi-moon-fill"></i>');
                 }
                 localStorage.setItem('theme', theme);
             }
