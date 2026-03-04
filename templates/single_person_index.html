@@ -1,4 +1,4 @@
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -159,7 +159,7 @@
             // Apply the theme
             function applyTheme(theme) {
                 if (theme === 'dark') {
-                    $('html').attr('data-bs-theme', 'dark');
+                    document.documentElement.setAttribute("data-bs-theme", theme);
                     themeToggle.html('<i class="bi bi-sun-fill"></i> Light Mode');
                 } else {
                     $('html').attr('data-bs-theme', 'light');

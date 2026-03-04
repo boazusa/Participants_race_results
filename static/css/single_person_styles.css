@@ -4,15 +4,22 @@
 
 [data-bs-theme="dark"] html,
 [data-bs-theme="dark"] body {
-    background-color: #050505 !important;
+    background: linear-gradient(180deg, #0a0f2c, #0d1333) !important;
     color: #ffffff !important;
 }
 
 /* כל הקונטיינרים */
 [data-bs-theme="dark"] .container,
 [data-bs-theme="dark"] .card {
-    background-color: #0b0b0b !important;
+    background: transparent !important;
+    background-color: transparent !important;
     color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .card {
+    backdrop-filter: blur(18px);
+    background: rgba(15, 25, 60, 0.45) !important;
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
 /* Loading */
@@ -34,7 +41,7 @@
     --bs-table-bg: #0f0f0f;
     --bs-table-border-color: #2a2a2a;
     --bs-table-color: #ffffff;
-    --bs-table-striped-bg: #1c1c1c;
+    --bs-table-striped-bg: #0f0f0f;
     --bs-table-hover-bg: #2d2d2d;
 
     background-color: #0f0f0f !important;
@@ -50,6 +57,7 @@
 /* Rows */
 [data-bs-theme="dark"] .table tbody tr {
     background-color: #0f0f0f !important;
+    transition: all 0.2s ease-in-out;
 }
 
 [data-bs-theme="dark"] .table tbody tr:nth-of-type(2n) {
@@ -57,20 +65,22 @@
 }
 
 [data-bs-theme="dark"] .table tbody tr:hover {
-    background-color: #2d2d2d !important;
+    background: rgba(0, 200, 255, 0.08) !important;
+}
+
+/* Override gradient backgrounds in dark mode */
+[data-bs-theme="dark"] .table tbody tr:nth-child(1),
+[data-bs-theme="dark"] .table tbody tr:nth-child(2),
+[data-bs-theme="dark"] .table tbody tr:nth-child(3) {
+    background: #0f0f0f !important;
 }
 
 /* Cells */
 [data-bs-theme="dark"] .table td,
 [data-bs-theme="dark"] .table th {
-    border-color: #2a2a2a !important;
     background-color: transparent !important;
     color: #ffffff !important;
-}
-
-/* שורות בסיס */
-[data-bs-theme="dark"] .table tbody tr {
-    background-color: #0f0f0f !important;
+    border-color: #2a2a2a !important;
 }
 
 /* שורה זוגית */
@@ -87,13 +97,6 @@
 [data-bs-theme="dark"] .table tbody tr td {
     background-color: transparent !important;
     color: #ffffff !important;
-}
-/* תאים */
-[data-bs-theme="dark"] .table td,
-[data-bs-theme="dark"] .table th {
-    border-color: #2a2a2a !important;
-    color: #ffffff !important;
-    background-color: transparent !important;
 }
 
 /* Header */
@@ -122,10 +125,145 @@
     color: #ffffff !important;
 }
 
-[data-bs-theme="dark"] .table tbody tr {
-    background-color: #0f0f0f !important;
-}
-
 [data-bs-theme="dark"] .table tbody tr:hover {
     background-color: #1a1a1a !important;
 }
+
+/* Force all rows same color in dark mode */
+[data-bs-theme="dark"] .table.table-striped tbody tr:nth-of-type(2n) {
+    background-color: #0f0f0f !important;
+}
+
+[data-bs-theme="dark"] .table.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #0f0f0f !important;
+}
+
+.table {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+
+/* 🎯 Highlight Top 3 rows */
+/* [data-bs-theme="dark"] #best-results-table tbody tr:nth-child(1),
+[data-bs-theme="dark"] #best-results-table tbody tr:nth-child(2),
+[data-bs-theme="dark"] #best-results-table tbody tr:nth-child(3) {
+    background: linear-gradient(90deg, #1f1f1f, #111111) !important;
+    border-left: 4px solid #00ffcc !important;
+} */
+
+[data-bs-theme="dark"] .table td:nth-child(3) {
+    font-weight: 600;
+    color: #00c8ff !important;
+}
+
+.table tbody tr {
+    animation: fadeInRow 0.3s ease-in;
+}
+
+@keyframes fadeInRow {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* כותרת טבלה נקייה ומודרנית */
+.result-section h3 {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+}
+
+/* ספייסינג פנימי טוב יותר */
+.result-section {
+    border-radius: 18px !important;
+    padding: 25px !important;
+}
+
+[data-bs-theme="dark"] .card {
+    background: linear-gradient(145deg, #0f0f0f, #111111) !important;
+    border: 1px solid #1f1f1f !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
+}
+
+.result-section h3 {
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 10px;
+}
+
+.table {
+    border-radius: 14px !important;
+}
+
+.table-responsive {
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background: rgba(0, 200, 255, 0.08) !important;
+    transition: background 0.2s ease-in-out;
+}
+
+[data-bs-theme="dark"] .table td:nth-child(5) {
+    font-weight: 700;
+    color: #00ffcc !important;
+}
+
+/* ============================= */
+/* 🎯 Highlight Important Columns */
+/* ============================= */
+
+/* זמן – KPI style */
+[data-bs-theme="dark"] .table td:nth-child(5),
+[data-bs-theme="light"] .table td:nth-child(5) {
+    font-weight: 700;
+}
+
+/* Dark mode time */
+[data-bs-theme="dark"] .table td:nth-child(5) {
+    color: #00ffcc !important;
+}
+
+/* Light mode time */
+[data-bs-theme="light"] .table td:nth-child(5) {
+    color: #0077cc !important;
+}
+
+/* שם מרוץ – Highlight */
+[data-bs-theme="dark"] .table td:nth-child(3) {
+    font-weight: 600;
+    color: #00c8ff !important;
+}
+
+[data-bs-theme="light"] .table td:nth-child(3) {
+    font-weight: 600;
+    color: #0056b3 !important;
+}
+
+/* Smooth table animation */
+.table tbody tr {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Soft row hover for both themes */
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background: rgba(0, 200, 255, 0.08) !important;
+}
+
+[data-bs-theme="light"] .table tbody tr:hover {
+    background: rgba(0, 86, 179, 0.08) !important;
+}
+
+/* Top 3 rows - Light */
+[data-bs-theme="light"] #best-results-table tbody tr:nth-child(1),
+[data-bs-theme="light"] #best-results-table tbody tr:nth-child(2),
+[data-bs-theme="light"] #best-results-table tbody tr:nth-child(3) {
+    background: linear-gradient(90deg, #fff7e6, #ffffff) !important;
+}
+

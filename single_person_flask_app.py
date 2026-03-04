@@ -116,22 +116,37 @@ def get_results():
         
         # Convert DataFrames to HTML tables with custom styling
         def format_table(df, table_id):
-            return df.to_html(
+            # return df.to_html(
+            #     classes="table table-striped table-hover",
+            #     index=False,
+            #     table_id=table_id,
+            #     border=0,
+            #     justify='right',
+            #     na_rep='',
+            #     formatters={
+            #         'תאריך אירוע': lambda x: x,
+            #         'שם': lambda x: x,
+            #         'שם מרוץ': lambda x: x,
+            #         'מקצה': lambda x: x,
+            #         'זמן': lambda x: x,
+            #     },
+            #     escape=False
+            # )
+
+            html = df.to_html(
                 classes="table table-striped table-hover",
                 index=False,
                 table_id=table_id,
                 border=0,
-                justify='right',
-                na_rep='',
-                formatters={
-                    'תאריך אירוע': lambda x: x,
-                    'שם': lambda x: x,
-                    'שם מרוץ': lambda x: x,
-                    'מקצה': lambda x: x,
-                    'זמן': lambda x: x,
-                },
+                justify="right",
+                na_rep="",
                 escape=False
             )
+
+            # הסרת class dataframe אם נכנס בטעות
+            html = html.replace("dataframe", "")
+
+            return html
         
         # Generate HTML tables with custom styling
         best_table = format_table(best_display, "best-results-table")
