@@ -314,6 +314,11 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             // Save localStorage
             localStorage.setItem("historyCollapsed", isCollapsed);
         }
+
+        function cleanTime(t) {
+            if (!t) return "";
+            return t.replace("0 days ", "");
+        }
     </script>
 </head>
 
@@ -429,6 +434,30 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
     <div class="results-card" id="top-results">
 
         <h2>🏆 Top 10 – {{ race_name }}</h2>
+
+        <div class="results-stats">
+
+            <span>
+                🏃 Fastest:
+                <strong>{{ fastest_time }}</strong>
+            </span>
+
+            <span>
+                📊 Avg:
+                <strong>{{ avg_time }}</strong>
+            </span>
+
+            <span>
+                👥 Total runners
+                <strong>:{{ total_runners }}</strong>
+            </span>
+
+            <span>
+                🥇 Top 3 cutoff:
+                <strong>{{ top3_cutoff }}</strong>
+            </span>
+
+        </div>
 
         <p class="results-meta">
         Showing best results for selected category

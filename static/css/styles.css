@@ -45,7 +45,7 @@ html, body {
 
 .hero {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .hero h1 {
@@ -95,6 +95,23 @@ html, body {
     margin-top: 50px;
 }
 
+/* Top 3 In one column: */
+/* .results-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+} */
+
+/* Top 3 In one line: */
+.results-stats {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
 /* ============================= */
 /* FORM */
 /* ============================= */
@@ -120,6 +137,12 @@ v
 }
 .modern-input::placeholder {
     color: #888;
+}
+
+.modern-input:focus{
+outline:none;
+border-color:#007bff;
+box-shadow:0 0 0 3px rgba(0,123,255,0.2);
 }
 
 .grid-2 {
@@ -229,6 +252,15 @@ v
     color: var(--text-color);
 }
 
+.table tbody tr{
+transition:all 0.25s ease;
+}
+
+.table tbody tr:hover{
+transform:scale(1.01);
+box-shadow:0 6px 20px rgba(0,0,0,0.1);
+}
+
 .history-table tbody tr {
     transition: all 0.2s ease;
 }
@@ -271,6 +303,7 @@ v
     align-items: center;
     justify-content: center;
     text-align: center;
+    margin-top: 10px;
 }
 
 .results-card h2 {
@@ -388,10 +421,12 @@ v
     margin-top:15px;
 }
 
-.results-meta{
-    opacity:0.7;
-    margin-bottom:15px;
+.results-meta {
     text-align: center;
+    font-size: 16px;
+    opacity: 0.7;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
 }
 
 .download-wrapper a {

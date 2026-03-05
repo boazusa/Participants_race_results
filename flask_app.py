@@ -64,6 +64,19 @@ def load_history():
         except:
             return []
 
+def clean_timedelta(td):
+    if pd.isna(td):
+        return ""
+    total_seconds = int(td.total_seconds())
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+
+    if hours > 0:
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    else:
+        return f"{minutes:02d}:{seconds:02d}"
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -165,6 +178,26 @@ def index():
             "קטגוריה",
         ]
 
+        # ===== RESULTS STATS =====
+
+        total_runners = len(df)
+        df["race_time"] = pd.to_timedelta(df["תוצאה מיטבית"], errors="coerce")
+
+        fastest_time = df["race_time"].min()
+        avg_time = df["race_time"].mean()
+        
+
+        # Convert to clean strings
+        fastest_time = clean_timedelta(fastest_time)
+        avg_time = clean_timedelta(avg_time)
+
+        # Optional – time of place 10
+        top3_cutoff = ""
+        if len(df) >= 3:
+            cutoff = df["race_time"].iloc[2]
+            if pd.notna(cutoff):
+                top3_cutoff = clean_timedelta(cutoff)
+
         df_best = df[columns_to_show]
         top10 = df_best.head(10).to_html(classes="table table-striped", index=False)
 
@@ -176,7 +209,11 @@ def index():
             download_link=output_file,
             done=True,
             race_name=race_name,
-            history=history
+            history=history,
+            fastest_time=fastest_time,
+            avg_time=avg_time,
+            total_runners=total_runners,
+            top3_cutoff=top3_cutoff
         )
 
     history = load_history()
