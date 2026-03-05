@@ -28,9 +28,41 @@ from flask import Flask, render_template, request, send_file
 import pandas as pd
 import os
 from datetime import datetime
+import json
 from best_results_3plus_or_realtiming_race import best_race_results_per_participant   # <-- your class file
 
 app = Flask(__name__)
+
+HISTORY_FILE = "run_history.json"
+
+def save_history(entry):
+    history = []
+
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+            try:
+                history = json.load(f)
+            except:
+                history = []
+
+    history.insert(0, entry)
+
+    # ===== LIMIT HISTORY SIZE =====
+    MAX_HISTORY = 50
+    history = history[:MAX_HISTORY]
+
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=4)
+
+def load_history():
+    if not os.path.exists(HISTORY_FILE):
+        return []
+
+    with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except:
+            return []
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -51,7 +83,7 @@ def index():
         category = request.form.get("category")
 
         # ======= Run your class =======
-        excel_path = f"excel/{datetime.now().strftime('%Y%m%d_%H%M%S')}_participants.xlsx"
+        # excel_path = f"excel/{datetime.now().strftime('%Y%m%d_%H%M%S')}_participants.xlsx"
         runner = best_race_results_per_participant(
             url=event_url,
             race_name=race_name,
@@ -89,9 +121,37 @@ def index():
         )
 
         if not excel_files:
-            raise Exception("No valid Excel files found for this race.")
+            return render_template(
+                "index.html",
+                done=False,
+                error_message="No runners found for the selected filters.",
+                history=load_history()
+            )
 
         output_file = "excel/" + excel_files[0]
+
+        history_entry = {
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "event_url": event_url,
+            "race_name": race_name,
+            "min_age": min_age,
+            "max_age": max_age,
+            "age_range": f"{min_age}-{max_age}",
+            "gender": gender,
+            "race_keyword": race_keyword,
+            "category": category,
+            "file": output_file
+        }
+
+        save_history(history_entry)
+
+        if not os.path.exists(output_file):
+            return render_template(
+                "index.html",
+                done=False,
+                error_message="Excel file was not generated.",
+                history=load_history()
+            )
 
 
         # Load result to show top 10
@@ -108,15 +168,20 @@ def index():
         df_best = df[columns_to_show]
         top10 = df_best.head(10).to_html(classes="table table-striped", index=False)
 
+        history = load_history()
+
         return render_template(
             "index.html",
             table_html=top10,
             download_link=output_file,
             done=True,
-            race_name=race_name
+            race_name=race_name,
+            history=history
         )
 
-    return render_template("index.html", done=False)
+    history = load_history()
+
+    return render_template("index.html", done=False, history=history)
 
 
 @app.route("/download")

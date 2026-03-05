@@ -3,6 +3,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>תוצאות מרוצים</title>
+    <link rel="icon" type="image/svg+xml" sizes="32x32"
+      href="{{ url_for('static', filename='images/medal_icon.png') }}">
     <script>
     const savedTheme = localStorage.getItem('theme') || 
                     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');

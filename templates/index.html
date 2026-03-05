@@ -9,6 +9,8 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 <head>
     <meta charset="UTF-8">
     <title>Best Race Results GUI</title>
+    <link rel="icon" type="image/svg+xml" sizes="32x32"
+      href="{{ url_for('static', filename='images/medal_icon.png') }}">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <!-- Add Google Fonts for better typography -->
@@ -140,7 +142,10 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
         }
 
         function startLoading() {
-            document.getElementById("loading-overlay").style.display = "flex";
+            const overlay = document.getElementById("loading-overlay");
+            if (overlay) {
+                overlay.style.display = "flex";
+            }
             const loadingEl = document.getElementById("loading");
             const secondsEl = document.getElementById("loading-seconds");
             const submitBtn = document.getElementById("submit-button");
@@ -182,7 +187,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             const progressBar = document.getElementById("progress-fill");
             const stepText = document.getElementById("overlay-step");
 
-            overlayTimerInterval = setInterval(function () {
+            let progressInterval = setInterval(function () {
 
                 progress += 1;
 
@@ -243,12 +248,26 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                         : '<i class="fas fa-moon"></i>';
             }
         }
-
+    
         document.addEventListener("DOMContentLoaded", function () {
+
+            const analysisDone = document.body.dataset.analysisDone === "true";
+
             applySavedTheme();
+
             const toggleBtn = document.getElementById("theme-toggle");
             if (toggleBtn) {
                 toggleBtn.addEventListener("click", toggleTheme);
+            }
+
+            // 🔥 AUTO SCROLL ONLY AFTER RUN
+            if (analysisDone) {
+                const results = document.getElementById("top-results");
+                if (results) {
+                    setTimeout(function() {
+                        results.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }, 300);
+                }
             }
 
             window.addEventListener("load", function () {
@@ -264,11 +283,41 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                     return false;
                 }
             }, true);
+
+            // Restore history state
+            const historySection = document.getElementById("history-section");
+            const historyToggleBtn = document.getElementById("history-toggle-btn");
+
+            if (historySection) {
+                const savedState = localStorage.getItem("historyCollapsed");
+
+                if (savedState === "true") {
+                    historySection.classList.add("collapsed");
+                    if (historyToggleBtn) {
+                        historyToggleBtn.innerHTML = "🔼 Show History";
+                    }
+                }
+            }
         });
+
+        function toggleHistory() {
+            const section = document.getElementById("history-section");
+            const btn = document.getElementById("history-toggle-btn");
+
+            if (!section) return;
+
+            const isCollapsed = section.classList.toggle("collapsed");
+
+            // History Button
+            btn.innerHTML = isCollapsed ? "🔼 Show History" : "🔽 Hide History";
+
+            // Save localStorage
+            localStorage.setItem("historyCollapsed", isCollapsed);
+        }
     </script>
 </head>
 
-<body>
+<body data-analysis-done="{{ done | lower }}">
 
 <div class="app-wrapper">
 
@@ -286,7 +335,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
     <!-- MAIN CARD -->
     <div class="glass-card">
 
-        <form method="POST" onsubmit="startLoading(); return true;">
+        <form method="POST" onsubmit="startLoading(); return true;" autocomplete="off">
 
             <!-- Event Section -->
             <div class="section">
@@ -294,10 +343,12 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
                 <input name="event_url" class="modern-input"
                        placeholder="Event URL"
+                       value="{{ request.args.get('event_url', '') }}"
                        required>
 
                 <input name="race_name" class="modern-input"
                        placeholder="Race Name"
+                       value="{{ request.args.get('race_name', '') }}"
                        required>
             </div>
 
@@ -368,22 +419,114 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
     {% if done %}
 
+    {% if error_message %}
+    <div class="alert alert-warning text-center mt-4">
+        ⚠ {{ error_message }}
+    </div>
+    {% endif %}
+
     <!-- RESULTS -->
-    <div class="results-card">
+    <div class="results-card" id="top-results">
 
         <h2>🏆 Top 10 – {{ race_name }}</h2>
+
+        <p class="results-meta">
+        Showing best results for selected category
+        </p>
 
         <div class="table-container">
             {{ table_html|safe }}
         </div>
 
         <div class="download-wrapper text-center">
+
             <a href="/download?path={{ download_link }}"
-            class="download-btn">
+            class="modern-btn run-again-btn">
                 ⬇ Download Full Excel
             </a>
-        </div>
 
+            <a href="/" class="modern-btn run-again-btn">
+                🔄 Run New Analysis
+            </a>
+        </div>
+    </div>
+
+    {% endif %}
+
+    {% if history %}
+
+    <div class="history-toggle-wrapper">
+        <button class="modern-btn run-again-btn"
+                onclick="toggleHistory(); return false;"
+                id="history-toggle-btn">
+            🔽 Hide History
+        </button>
+    </div>
+
+    <div class="results-card history-wrapper" id="history-section">
+        <h2>📜 Analysis History</h2>
+            
+        <p class="history-subtitle">
+        Quickly rerun previous analyses
+        </p>
+
+        <div class="table-container">
+            <table class="table history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Race</th>
+                        <th>Category</th>
+                        <th>Age</th>
+                        <th>File</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for run in history %}
+                    <tr>
+                        <td>{{ run.timestamp }}</td>
+                        <td>{{ run.race_name }}</td>
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ run.race_keyword }}K
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-secondary">
+                                {{ run.age_range }}
+                            </span>
+                        </td>
+                        <td>
+                            <form action="/download" method="GET">
+                                <input type="hidden" name="path" value="{{ run.file }}">
+                                <button type="submit" class="modern-btn run-again-btn" title="Download Excel">
+                                    <i class="fas fa-file-excel"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" onsubmit="startLoading(); return true;" autocomplete="off">
+                                <input type="hidden" name="event_url" value="{{ run.event_url }}">
+                                <input type="hidden" name="race_name" value="{{ run.race_name }}">
+                                <input type="hidden" name="min_age" value="{{ run.min_age }}">
+                                <input type="hidden" name="max_age" value="{{ run.max_age }}">
+                                <input type="hidden" name="gender" value="{{ run.gender }}">
+                                <input type="hidden" name="race_keyword" value="{{ run.race_keyword }}">
+                                <input type="hidden" name="category" value="{{ run.category }}">
+
+                                <button class="modern-btn run-again-btn" title="Run Again">
+                                    <i class="fas fa-rotate"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     {% endif %}
@@ -395,8 +538,6 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
     </div>
 
 </div>
-
-</body>
 
 <div id="loading-overlay">
     <div class="loader-box">
@@ -420,6 +561,8 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
     </div>
 </div>
+
+</body>
 
 </html>
 

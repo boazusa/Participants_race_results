@@ -34,7 +34,7 @@ html, body {
 }
 
 .app-wrapper {
-    max-width: 900px;   /* כמו אצלך */
+    max-width: 900px;
     margin: auto;
     padding: 40px 20px;
 }
@@ -165,21 +165,12 @@ v
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-.download-btn {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 12px 20px;
-    border-radius: 12px;
-    background: linear-gradient(135deg,#28a745,#20c997);
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.3s ease;
-}
-
-.download-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+.download-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 /* ============================= */
@@ -238,6 +229,50 @@ v
     color: var(--text-color);
 }
 
+.history-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.history-table tbody tr:hover {
+    transform: scale(1.01);
+    background: rgba(0, 123, 255, 0.05);
+}
+
+.history-subtitle{
+    opacity:0.7;
+    margin-bottom:20px;
+    font-size:14px;
+    text-align: center;
+}
+
+.history-wrapper {
+    overflow: hidden;
+    max-height: 2000px;
+    opacity: 1;
+    transition: max-height 0.5s ease, opacity 0.4s ease;
+}
+
+.history-wrapper.collapsed {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.history-toggle-wrapper {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+#history-toggle-btn {
+    width: 200px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
 .results-card h2 {
     text-align: center;
     margin-bottom: 20px;
@@ -275,7 +310,6 @@ v
     position: fixed;
     top: 20px;
 
-    /* במקום left/right נשתמש בזה */
     /* inset-inline-start: 20px; */
     left: 20px;
     right: auto;
@@ -339,4 +373,76 @@ v
     text-align: center;
 }
 
+.run-again-btn {
+    width: auto;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+}
+
+.download-wrapper{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+
+.results-meta{
+    opacity:0.7;
+    margin-bottom:15px;
+    text-align: center;
+}
+
+.download-wrapper a {
+    margin: 8px;
+}
+
+/* Force our style over Bootstrap */
+a.modern-btn,
+button.modern-btn {
+    background: linear-gradient(135deg,#007bff,#00c6ff) !important;
+    border: none !important;
+    color: white !important;
+}
+
+.download-wrapper .modern-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;              /* 🔥 Same height to all*/
+    line-height: 1;
+}
+
+.download-wrapper a:hover,
+.download-wrapper button:hover {
+    background: linear-gradient(135deg,#007bff,#00c6ff) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+}
+
+/* 🔴 Kill ALL Bootstrap button states inside download wrapper */
+.download-wrapper .modern-btn,
+.download-wrapper .modern-btn:hover,
+.download-wrapper .modern-btn:focus,
+.download-wrapper .modern-btn:active,
+.download-wrapper .modern-btn:focus-visible {
+    background: linear-gradient(135deg,#007bff,#00c6ff) !important;
+    color: white !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* 🔴 Remove weird grey background from anchor buttons */
+.download-wrapper a {
+    background-color: transparent !important;
+    text-decoration: none !important;
+}
+
+.download-wrapper .modern-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+}
 
