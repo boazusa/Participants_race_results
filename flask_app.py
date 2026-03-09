@@ -29,6 +29,7 @@ import pandas as pd
 import os
 from datetime import datetime
 import json
+import uuid
 from best_results_3plus_or_realtiming_race import best_race_results_per_participant   # <-- your class file
 
 app = Flask(__name__)
@@ -36,6 +37,7 @@ app = Flask(__name__)
 HISTORY_FILE = "run_history.json"
 
 def save_history(entry):
+
     history = []
 
     if os.path.exists(HISTORY_FILE):
@@ -45,9 +47,10 @@ def save_history(entry):
             except:
                 history = []
 
+    entry["id"] = str(uuid.uuid4())   # ← ID קבוע
+
     history.insert(0, entry)
 
-    # ===== LIMIT HISTORY SIZE =====
     MAX_HISTORY = 50
     history = history[:MAX_HISTORY]
 
@@ -60,9 +63,23 @@ def load_history():
 
     with open(HISTORY_FILE, "r", encoding="utf-8") as f:
         try:
-            return json.load(f)
+            history = json.load(f)
         except:
             return []
+
+    # 🔥 FIX: ensure every entry has an ID
+    changed = False
+    for entry in history:
+        if "id" not in entry:
+            entry["id"] = str(uuid.uuid4())
+            changed = True
+
+    # אם הוספנו IDים → נשמור חזרה לקובץ
+    if changed:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(history, f, ensure_ascii=False, indent=4)
+
+    return history
 
 def clean_timedelta(td):
     if pd.isna(td):
@@ -192,7 +209,7 @@ def index():
         avg_time = clean_timedelta(avg_time)
 
         # Optional – time of place 10
-        top3_cutoff = ""
+        top3_cutoff = "N/A"
         if len(df) >= 3:
             cutoff = df["race_time"].iloc[2]
             if pd.notna(cutoff):
@@ -226,6 +243,27 @@ def download():
     path = request.args.get("path")
     return send_file(path, as_attachment=True)
 
+
+@app.route("/delete_history/<row_id>", methods=["DELETE"])
+def delete_history(row_id):
+
+    history = load_history()
+
+    print("DELETE REQUEST:", row_id)
+    print("IDs in file:", [h.get("id") for h in history])
+
+    history = [
+        h for h in history
+        if str(h.get("id")) != str(row_id)
+    ]
+
+    print("After filter:", [h.get("id") for h in history])
+
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=4)
+
+    return {"success": True}
+    
 
 """
  & C:/tools/Python/python.exe c:/Users/USER/Documents/Python/running_records/running_records_windsurf/flask_app.py

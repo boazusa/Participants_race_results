@@ -288,6 +288,9 @@ box-shadow:0 6px 20px rgba(0,0,0,0.1);
     max-height: 0;
     opacity: 0;
     pointer-events: none;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
 }
 
 .history-toggle-wrapper {
@@ -481,3 +484,13 @@ button.modern-btn {
     height: 44px;
 }
 
+.history-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    align-items:center;
+}
+
+.history-actions form{
+    margin:0;
+}

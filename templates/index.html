@@ -319,6 +319,27 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             if (!t) return "";
             return t.replace("0 days ", "");
         }
+
+        document.addEventListener("click", function(e) {
+
+            const btn = e.target.closest(".delete-history");
+            if (!btn) return;
+
+            const id = btn.dataset.id;
+
+            if (!confirm("Delete this history record?")) return;
+
+            fetch(`/delete_history/${id}`, {
+                method: "DELETE"
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    btn.closest("tr").remove();
+                }
+            });
+
+        });
     </script>
 </head>
 
@@ -346,13 +367,17 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             <div class="section">
                 <h4>Event Configuration</h4>
 
+                <!-- autocomplete="on" - to view & use recenet events URLs -->
                 <input name="event_url" class="modern-input"
                        placeholder="Event URL"
+                       autocomplete="on"
                        value="{{ request.args.get('event_url', '') }}"
                        required>
 
+                <!-- autocomplete="on" - to view & use recenet events names -->
                 <input name="race_name" class="modern-input"
                        placeholder="Race Name"
+                       autocomplete="on"
                        value="{{ request.args.get('race_name', '') }}"
                        required>
             </div>
@@ -537,6 +562,9 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                             </form>
                         </td>
                         <td>
+
+                            <div class="history-actions">
+
                             <form method="POST" onsubmit="startLoading(); return true;" autocomplete="off">
                                 <input type="hidden" name="event_url" value="{{ run.event_url }}">
                                 <input type="hidden" name="race_name" value="{{ run.race_name }}">
@@ -549,7 +577,18 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                                 <button class="modern-btn run-again-btn" title="Run Again">
                                     <i class="fas fa-rotate"></i>
                                 </button>
+
                             </form>
+
+                            <button type="button"
+                                    class="modern-btn run-again-btn delete-history"
+                                    data-id="{{ run.id }}"
+                                    title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                            </div>
+
                         </td>
                     </tr>
                 {% endfor %}

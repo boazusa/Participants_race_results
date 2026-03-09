@@ -22,7 +22,8 @@ The UI includes:
 - `flask_app.py`  – Flask web server and routes (`/` for the GUI, `/download` for Excel files).
 - `best_results_3plus_or_realtiming_race.py` – Core scraping, filtering and best-result computation logic.
 - `templates/index.html` – Web UI template (Bootstrap-based) used by Flask.
-- `test_best_results_helpers.py` – Unit tests for helper functions (`normalize_distance`, `choose_best_time_string`).
+- `test_best_results_helpers.py` – Unit tests for helper functions (`normalize_distance`, `choose_best_time_string`) using unittest.
+- `test_project.py` – Comprehensive pytest suite covering scraping, filtering, normalization, and Flask routes.
 - `requirements.txt` – Python dependencies.
 - `excel/` – Output folder for generated Excel files (created automatically at runtime).
 
@@ -98,14 +99,23 @@ excel/2024_01_01_12_30_00_באר יעקב_best_results_10K.xlsx
 
 From the project root:
 
+For basic helper tests (unittest):
 ```bash
 python -m unittest test_best_results_helpers.py
 ```
 
-These tests cover:
+For comprehensive tests (pytest):
+```bash
+pytest test_project.py
+```
 
-- `normalize_distance` – mapping provider-specific distance strings / numbers to canonical `5K`, `10K`, `21K`, `42K`, etc.
-- `choose_best_time_string` – picking the best available time string between `"זמן אישי"` and `"תוצאה"` columns while ignoring invalid values.
+The tests cover:
+
+- `normalize_distance` and `normalize_year` – mapping and normalizing data.
+- `choose_best_time_string` – picking valid time strings.
+- Scraping functions with mocked HTTP responses.
+- Filtering logic (`get_filtered_names_*`).
+- Flask app routes.
 
 ## Notes and limitations
 
@@ -117,4 +127,4 @@ These tests cover:
 
 - More robust error handling and user-visible error messages (bad URL, no table found, network errors).
 - Background job queue for long-running scraping and best-result computation.
-- Additional unit tests for filtering logic (`get_filtered_names_*`).
+- Additional unit tests for filtering logic (`get_filtered_names_*`) – now implemented in `test_project.py`.
