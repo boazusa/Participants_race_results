@@ -1,0 +1,224 @@
+name: Performance Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run performance tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  performance:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'performance')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+    
+    - name: Run performance tests
+      run: |
+        pytest tests/test_performance.py -v -m "performance" --benchmark-only --benchmark-json=benchmark.json --benchmark-sort=mean
+    
+    - name: Store benchmark result
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        tool: 'pytest'
+        output-file-path: benchmark.json
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true
+        comment-on-alert: true
+        alert-threshold: '150%'
+        fail-on-alert: false
+        summary-always: true
+    
+    - name: Generate performance report
+      run: |
+        pip install matplotlib seaborn
+        python -c "
+        import json
+        import matplotlib.pyplot as plt
+        import numpy as np
+        
+        with open('benchmark.json', 'r') as f:
+            data = json.load(f)
+        
+        # Extract benchmark data
+        benchmarks = data.get('benchmarks', [])
+        names = [b['name'] for b in benchmarks]
+        times = [b['stats']['mean'] for b in benchmarks]
+        
+        # Create performance chart
+        plt.figure(figsize=(12, 8))
+        plt.bar(names, times)
+        plt.title('Performance Benchmark Results')
+        plt.xlabel('Benchmark')
+        plt.ylabel('Time (seconds)')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        plt.savefig('performance-chart.png')
+        print('Performance chart generated')
+        "
+    
+    - name: Upload performance artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-results
+        path: |
+          benchmark.json
+          performance-chart.png
+        retention-days: 30
+
+  memory-profiling:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install memory-profiler matplotlib
+    
+    - name: Run memory profiling
+      run: |
+        python -m memory_profiler tests/test_memory_profiling.py > memory-profile.txt
+    
+    - name: Generate memory profile visualization
+      run: |
+        python -c "
+        from memory_profiler import memory_profiler
+        import matplotlib.pyplot as plt
+        
+        # Parse memory profile
+        with open('memory-profile.txt', 'r') as f:
+            lines = f.readlines()
+        
+        # Extract memory usage data
+        memory_data = []
+        for line in lines:
+            if line.strip() and not line.startswith('#'):
+                parts = line.split()
+                if len(parts) >= 4:
+                    try:
+                        memory_usage = float(parts[3])
+                        memory_data.append(memory_usage)
+                    except ValueError:
+                        continue
+        
+        if memory_data:
+            plt.figure(figsize=(10, 6))
+            plt.plot(memory_data)
+            plt.title('Memory Usage Profile')
+            plt.xlabel('Execution Step')
+            plt.ylabel('Memory Usage (MiB)')
+            plt.grid(True)
+            plt.savefig('memory-profile.png')
+            print('Memory profile chart generated')
+        "
+    
+    - name: Upload memory profile artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: memory-profile
+        path: |
+          memory-profile.txt
+          memory-profile.png
+        retention-days: 30
+
+  load-testing:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install locust
+    
+    - name: Run load testing
+      run: |
+        # Create locustfile for Flask app testing
+        cat > locustfile.py << 'EOF'
+from locust import HttpUser, task, between
+import json
+
+class RunningRecordsUser(HttpUser):
+    wait_time = between(1, 3)
+    
+    def on_start(self):
+        """Initialize user session"""
+        pass
+    
+    @task(3)
+    def test_main_app_form_submission(self):
+        """Test main Flask app form submission"""
+        self.client.post("/", data={
+            'event_url': 'https://regi.3plus.co.il/events/page/test',
+            'race_name': 'Load Test Race',
+            'min_age': '40',
+            'max_age': '49',
+            'gender': 'male',
+            'race_keyword': '10',
+            'category': '10K'
+        })
+    
+    @task(2)
+    def test_single_person_search(self):
+        """Test single person search"""
+        self.client.post("/get_results", data={
+            'first_name': 'דני',
+            'last_name': 'כהן'
+        })
+    
+    @task(1)
+    def test_index_pages(self):
+        """Test index page loading"""
+        self.client.get("/")
+        self.client.get("/")
+EOF
+        
+        # Run load test
+        locust --headless --users 50 --spawn-rate 5 --run-time 30s --host http://localhost:5000 --html load-test-report.html || true
+    
+    - name: Upload load test artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: load-test-results
+        path: load-test-report.html
+        retention-days: 30

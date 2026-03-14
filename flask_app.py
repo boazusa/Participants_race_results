@@ -20,7 +20,7 @@ Dependencies:
     - gunicorn >= 20.1.0 (for production deployment)
 Performance: Designed for small to medium race participant datasets.
              Heavy use may require background job processing.
-License: [Your License, e.g., MIT, Apache 2.0]
+License: [boazusa@hotmail.com]
 ===============================================================================
 """
 

@@ -29,7 +29,7 @@ import sys
 import os
 
 # Add the parent directory to the path to allow importing the module under test
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import the module to be tested
 import best_results_3plus_or_realtiming_race as br
@@ -114,3 +114,5 @@ python -m unittest test_best_results_helpers.py
 
 if __name__ == "__main__":
     unittest.main()
+
+# python -m unittest test_best_results_helpers

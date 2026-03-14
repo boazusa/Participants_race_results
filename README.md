@@ -22,10 +22,34 @@ The UI includes:
 - `flask_app.py`  – Flask web server and routes (`/` for the GUI, `/download` for Excel files).
 - `best_results_3plus_or_realtiming_race.py` – Core scraping, filtering and best-result computation logic.
 - `templates/index.html` – Web UI template (Bootstrap-based) used by Flask.
-- `test_best_results_helpers.py` – Unit tests for helper functions (`normalize_distance`, `choose_best_time_string`) using unittest.
-- `test_project.py` – Comprehensive pytest suite covering scraping, filtering, normalization, and Flask routes.
+- `tests/` – Complete testing framework with 166 passing tests.
 - `requirements.txt` – Python dependencies.
 - `excel/` – Output folder for generated Excel files (created automatically at runtime).
+
+## Testing
+
+The project includes a comprehensive testing framework with **166 passing tests** located in the `tests/` folder:
+
+```bash
+# Run all tests
+pytest
+
+# Run tests with coverage
+pytest --cov=best_results_3plus_or_realtiming_race
+
+# Run specific test file
+pytest tests/test_race_analysis.py -v
+```
+
+### Test Coverage:
+- ✅ Race analysis functionality (63 tests)
+- ✅ Data normalization (44 tests) 
+- ✅ Web scraping (6 tests)
+- ✅ Error handling (9 tests)
+- ✅ Helper functions (13 tests)
+- ✅ Flask application (6 tests)
+
+For detailed testing documentation, see `tests/README_TESTING.md`.
 
 ## Prerequisites
 

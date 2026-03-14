@@ -16,9 +16,14 @@ Dependencies:
 import pytest
 import pandas as pd
 import numpy as np
+import sys
+import os
 from unittest.mock import patch, MagicMock
 import requests_mock
 from bs4 import BeautifulSoup
+
+# Add project root to path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import project modules
 from best_results_3plus_or_realtiming_race import best_race_results_per_participant
