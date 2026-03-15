@@ -81,7 +81,7 @@ jobs:
         "
     
     - name: Upload performance artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: performance-results
         path: |
@@ -145,7 +145,7 @@ jobs:
         "
     
     - name: Upload memory profile artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: memory-profile
         path: |
@@ -217,7 +217,7 @@ EOF
         locust --headless --users 50 --spawn-rate 5 --run-time 30s --host http://localhost:5000 --html load-test-report.html || true
     
     - name: Upload load test artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: load-test-results
         path: load-test-report.html
