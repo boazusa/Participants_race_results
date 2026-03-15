@@ -7,7 +7,6 @@ pytest-cov>=4.1.0
 pytest-html>=4.1.1
 pytest-xdist>=3.3.1  # For parallel test execution
 pytest-mock>=3.11.1
-pytest-benchmark>=4.0.0  # For performance testing
 
 # HTTP request mocking
 requests-mock>=1.11.0
