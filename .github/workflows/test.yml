@@ -97,57 +97,57 @@ jobs:
         # Create a comprehensive dummy benchmark.json if no benchmarks were run
         if [ ! -f benchmark.json ] || [ ! -s benchmark.json ]; then
           cat > benchmark.json << 'EOF'
-{
-  "benchmarks": [
-    {
-      "name": "dummy_benchmark",
-      "group": "dummy",
-      "fullname": "tests/dummy_test.py::dummy_benchmark",
-      "params": {},
-      "param": null,
-      "extra_info": {},
-      "options": {},
-      "min": 0.001,
-      "max": 0.001,
-      "mean": 0.001,
-      "stddev": 0.0,
-      "rounds": 1,
-      "median": 0.001,
-      "iqr": 0.0,
-      "q1": 0.001,
-      "q3": 0.001,
-      "iqr_outliers": 0,
-      "stddev_outliers": 0,
-      "outliers": "",
-      "ld15iqr": 0.001,
-      "hd15iqr": 0.001,
-      "ops": 1000.0,
-      "total": 0.001,
-      "iterations": 1,
-      "output": ""
-    }
-  ],
-  "machine_info": {
-    "node_name": "github-runner",
-    "platform": "linux",
-    "processor": "x86_64",
-    "python_implementation": "CPython",
-    "python_version": "3.11",
-    "python_compiler": "GCC",
-    "release": "5.4.0"
-  },
-  "commit_info": {
-    "branch": "main",
-    "commit": "dummy",
-    "author": "dummy",
-    "author_email": "dummy@example.com",
-    "committed_timestamp": 0,
-    "message": "dummy benchmark"
-  },
-  "datetime": "2024-01-01T00:00:00Z",
-  "version": "2.0.0"
-}
-EOF
+        {
+          "benchmarks": [
+            {
+              "name": "dummy_benchmark",
+              "group": "dummy",
+              "fullname": "tests/dummy_test.py::dummy_benchmark",
+              "params": {},
+              "param": null,
+              "extra_info": {},
+              "options": {},
+              "min": 0.001,
+              "max": 0.001,
+              "mean": 0.001,
+              "stddev": 0.0,
+              "rounds": 1,
+              "median": 0.001,
+              "iqr": 0.0,
+              "q1": 0.001,
+              "q3": 0.001,
+              "iqr_outliers": 0,
+              "stddev_outliers": 0,
+              "outliers": "",
+              "ld15iqr": 0.001,
+              "hd15iqr": 0.001,
+              "ops": 1000.0,
+              "total": 0.001,
+              "iterations": 1,
+              "output": ""
+            }
+          ],
+          "machine_info": {
+            "node_name": "github-runner",
+            "platform": "linux",
+            "processor": "x86_64",
+            "python_implementation": "CPython",
+            "python_version": "3.11",
+            "python_compiler": "GCC",
+            "release": "5.4.0"
+          },
+          "commit_info": {
+            "branch": "main",
+            "commit": "dummy",
+            "author": "dummy",
+            "author_email": "dummy@example.com",
+            "committed_timestamp": 0,
+            "message": "dummy benchmark"
+          },
+          "datetime": "2024-01-01T00:00:00Z",
+          "version": "2.0.0"
+        }
+        EOF
           echo "Created comprehensive dummy benchmark.json for benchmark-action compatibility"
         fi
     
