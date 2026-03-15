@@ -66,4 +66,4 @@ loguru>=0.7.0
 
 # Type checking
 types-requests>=2.31.0
-types-pandas>=2.0.0
+types-pandas>=2.1.0
