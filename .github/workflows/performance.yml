@@ -45,7 +45,7 @@ jobs:
       id: run-performance-tests
       run: |
         echo "Running basic performance benchmarks..."
-        pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json --benchmark-sort=mean --benchmark-min-rounds=1 || echo "No benchmark tests found, skipping performance benchmarks"
+        cd tests && pytest . -v --benchmark-only --benchmark-json=benchmark.json --benchmark-sort=mean --benchmark-min-rounds=1 || echo "No benchmark tests found, skipping performance benchmarks"
         
         # If no benchmarks were run, skip benchmark-action step
         if [ ! -f benchmark.json ] || [ ! -s benchmark.json ]; then

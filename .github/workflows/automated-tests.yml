@@ -44,7 +44,7 @@ jobs:
         
     - name: 🧪 Run tests
       run: |
-        python -m pytest tests/ --tb=short --cov=best_results_3plus_or_realtiming_race --cov-report=xml --cov-report=html
+        cd tests && python -m pytest . --tb=short --cov=best_results_3plus_or_realtiming_race --cov-report=xml --cov-report=html
         
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4

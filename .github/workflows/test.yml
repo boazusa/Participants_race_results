@@ -57,7 +57,7 @@ jobs:
     
     - name: Run unit tests
       run: |
-        pytest tests/ -v --cov=best_results_3plus_or_realtiming_race --cov-report=xml --cov-report=html
+        cd tests && pytest . -v --cov=best_results_3plus_or_realtiming_race --cov-report=xml --cov-report=html
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
@@ -93,7 +93,7 @@ jobs:
       id: run-performance-tests
       run: |
         echo "Running basic performance benchmarks..."
-        pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json --benchmark-sort=mean --benchmark-min-rounds=1 || echo "No benchmark tests found, skipping performance benchmarks"
+        cd tests && pytest . -v --benchmark-only --benchmark-json=benchmark.json --benchmark-sort=mean --benchmark-min-rounds=1 || echo "No benchmark tests found, skipping performance benchmarks"
         
         # If no benchmarks were run, skip benchmark-action step
         if [ ! -f benchmark.json ] || [ ! -s benchmark.json ]; then
@@ -136,10 +136,11 @@ jobs:
         pip install --no-cache-dir pandas==2.0.3
         pip install --no-cache-dir -r requirements.txt
         pip install --no-cache-dir -r tests/requirements-dev.txt
+        pip install --no-cache-dir pytest-timeout
     
     - name: Run integration tests
       run: |
-        pytest tests/ -v --timeout=300 || true
+        cd tests && pytest . -v --timeout=300 || true
 
   security:
     runs-on: ubuntu-latest
