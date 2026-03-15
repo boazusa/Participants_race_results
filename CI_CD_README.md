@@ -21,7 +21,7 @@ This project now includes automated testing that runs every time you checkout a 
 - **Platform**: GitHub Actions
 - **Trigger**: Push and pull requests to main/develop
 - **Features**:
-  - ✅ Multi-Python version testing (3.8, 3.9, 3.10, 3.11)
+  - ✅ Multi-Python version testing (3.9, 3.10, 3.11)
   - ✅ Automated dependency installation
   - ✅ Coverage reporting with pytest-cov
   - ✅ Codecov integration
@@ -90,7 +90,7 @@ python -m pytest --tb=short --color=yes --durations=10
 ### **🎯 Benefits:**
 
 1. **Automated Quality Assurance** - Tests run on every change
-2. **Multi-Version Compatibility** - Test on Python 3.8-3.11
+2. **Multi-Version Compatibility** - Test on Python 3.9-3.11
 3. **Coverage Tracking** - Monitor test coverage over time
 4. **Fast Feedback** - Immediate results on pull requests
 5. **Historical Tracking** - Test result history and trends
