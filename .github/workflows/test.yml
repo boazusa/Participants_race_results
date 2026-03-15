@@ -90,68 +90,21 @@ jobs:
         pip install --no-cache-dir -r tests/requirements-dev.txt
     
     - name: Run performance tests
+      id: run-performance-tests
       run: |
         echo "Running basic performance benchmarks..."
-        pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json --benchmark-sort=mean --benchmark-min-rounds=1 || echo "No benchmark tests found, creating dummy benchmark file"
+        pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json --benchmark-sort=mean --benchmark-min-rounds=1 || echo "No benchmark tests found, skipping performance benchmarks"
         
-        # Create a comprehensive dummy benchmark.json if no benchmarks were run
+        # If no benchmarks were run, skip benchmark-action step
         if [ ! -f benchmark.json ] || [ ! -s benchmark.json ]; then
-          cat > benchmark.json << 'EOF'
-        {
-          "benchmarks": [
-            {
-              "fullname": "tests/test_simple_working.py::TestRaceAnalyzerBasics::test_init_with_url",
-              "name": "test_init_with_url",
-              "group": "test_simple_working.py::TestRaceAnalyzerBasics",
-              "params": {},
-              "param": null,
-              "extra_info": {},
-              "options": {},
-              "min": 0.0001,
-              "max": 0.0002,
-              "mean": 0.00015,
-              "stddev": 0.00005,
-              "rounds": 5,
-              "median": 0.00015,
-              "iqr": 0.00005,
-              "q1": 0.00012,
-              "q3": 0.00018,
-              "iqr_outliers": 0,
-              "stddev_outliers": 0,
-              "outliers": "",
-              "ld15iqr": 0.00013,
-              "hd15iqr": 0.00017,
-              "ops": 6666.6667,
-              "total": 0.00075,
-              "iterations": 5,
-              "output": ""
-            }
-          ],
-          "machine_info": {
-            "node_name": "github-runner",
-            "platform": "Linux-5.4.0-109-generic-x86_64-with-glibc2.31",
-            "processor": "x86_64",
-            "python_implementation": "CPython",
-            "python_version": "3.11.15",
-            "python_compiler": "GCC 11.4.0",
-            "release": "5.4.0-109-generic"
-          },
-          "commit_info": {
-            "branch": "main",
-            "commit": "abc123",
-            "author": "GitHub Actions",
-            "author_email": "actions@github.com",
-            "committed_timestamp": 1672531200,
-            "message": "Run tests"
-          },
-          "datetime": "2024-01-01T00:00:00.000000Z",
-          "version": "4.0.0"
-        }
-        EOF
-          echo "Created comprehensive dummy benchmark.json for benchmark-action compatibility"
+          echo "No benchmark tests found - skipping benchmark storage"
+          echo "skip-benchmark=true" >> $GITHUB_OUTPUT
+        else
+          echo "skip-benchmark=false" >> $GITHUB_OUTPUT
         fi
     
     - name: Store benchmark result
+      if: steps.run-performance-tests.outputs.skip-benchmark != 'true'
       uses: benchmark-action/github-action-benchmark@v1
       with:
         tool: 'pytest'
