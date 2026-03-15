@@ -355,7 +355,7 @@ def network_error_mock():
             self.call_count += 1
             if self.call_count == self.fail_on_call:
                 if self.error_type == "timeout":
-                    raise Timeout("Request timeout")
+                    raise TimeoutError("Request timeout")
                 elif self.error_type == "connection":
                     raise ConnectionError("Connection failed")
                 elif self.error_type == "http_error":

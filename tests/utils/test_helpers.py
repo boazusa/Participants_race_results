@@ -19,6 +19,7 @@ License: [boazusa@hotmail.com]
 import pandas as pd
 import numpy as np
 import requests
+import re
 from unittest.mock import Mock, patch
 from datetime import datetime, timedelta
 import tempfile

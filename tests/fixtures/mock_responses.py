@@ -345,14 +345,16 @@ class MockResponses:
         """Mock response with large dataset for performance testing."""
         rows = []
         for i in range(1000):
+            distance = "10 ק\"מ" if i % 3 == 0 else "21 ק\"מ" if i % 3 == 1 else "5 ק\"מ"
+            gender = "ז" if i % 2 == 0 else "נ"
             rows.append(f'''
                 <tr>
                     <td>{i+1}</td>
                     <td>שם{i}</td>
                     <td>משפחה{i}</td>
                     <td>{1980 + (i % 40)}</td>
-                    <td>{"ז" if i % 2 == 0 else "נ"}</td>
-                    <td>{"10 ק\"מ" if i % 3 == 0 else "21 ק\"מ" if i % 3 == 1 else "5 ק\"מ"}</td>
+                    <td>{gender}</td>
+                    <td>{distance}</td>
                     <td>קבוצה{i}</td>
                 </tr>
             ''')
