@@ -22,13 +22,13 @@ The UI includes:
 - `flask_app.py`  – Flask web server and routes (`/` for the GUI, `/download` for Excel files).
 - `best_results_3plus_or_realtiming_race.py` – Core scraping, filtering and best-result computation logic.
 - `templates/index.html` – Web UI template (Bootstrap-based) used by Flask.
-- `tests/` – Complete testing framework with 166 passing tests.
+- `tests/` – Complete testing framework with 171 passing tests.
 - `requirements.txt` – Python dependencies.
 - `excel/` – Output folder for generated Excel files (created automatically at runtime).
 
 ## Testing
 
-The project includes a comprehensive testing framework with **166 passing tests** located in the `tests/` folder:
+The project includes a comprehensive testing framework with **171 passing tests** located in the `tests/` folder:
 
 ```bash
 # Run all tests

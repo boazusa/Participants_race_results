@@ -50,19 +50,19 @@ python -m pytest -v --tb=short --color=yes --durations=10
 
 #### **Performance Information:**
 - **Slowest test durations** displayed
-- **Execution timing** for performance monitoring
-- **Test count and coverage** information
+- **Test timing** for performance monitoring
+- **Coverage reporting** with detailed statistics
 
 ### **🚀 Available Files:**
 
 #### **1. `run_tests.bat`** (Enhanced)
-- ✅ All 166 tests
+- ✅ All 171 tests
 - ✅ Professional formatting
 - ✅ Emoji indicators (may not work in all consoles)
 - ✅ Detailed statistics
 
 #### **2. `run_tests_professional.bat`** (New)
-- ✅ All 166 tests  
+- ✅ All 171 tests  
 - ✅ Clean console output
 - ✅ Professional status indicators
 - ✅ Performance timing
