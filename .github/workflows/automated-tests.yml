@@ -31,24 +31,25 @@ jobs:
         
     - name: 🧪 Run tests
       run: |
-        cd tests
-        python -m pytest --tb=short --cov=best_results_3plus_or_realtiming_race --cov-report=xml --cov-report=html
+        python -m pytest tests/ --tb=short --cov=best_results_3plus_or_realtiming_race --cov-report=xml --cov-report=html
         
-    - name: 📊 Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4
       with:
-        file: ./tests/coverage.xml
+        file: ./coverage.xml
         flags: unittests
         name: codecov-umbrella
-        
-    - name: 📋 Upload test results
-      uses: actions/upload-artifact@v3
+        fail_ci_if_error: false
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results-${{ matrix.python-version }}
         path: |
-          tests/htmlcov/
-          tests/coverage.xml
+          htmlcov/
+          coverage.xml
+          test-results.xml
         retention-days: 30
         
     - name: ✅ Test Summary
