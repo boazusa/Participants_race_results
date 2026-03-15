@@ -27,93 +27,104 @@ import pandas as pd
 import os
 from Single_person_results_w_top_results import fetch_and_process_results
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__, static_folder="static")
+
 
 @app.route("/")
 def index():
     return render_template("single_person_index.html")
+
 
 @app.route("/get_results", methods=["POST"])
 def get_results():
     try:
         first_name = request.form.get("first_name", "").strip()
         last_name = request.form.get("last_name", "").strip()
-        
+
         if not first_name or not last_name:
             return jsonify({"error": "First name and last name are required"}), 400
 
         # Get results from the existing function
         print(f"Fetching results for {first_name} {last_name}")
         best_results, all_results = fetch_and_process_results(first_name, last_name)
-        
+
         # Debug: Print column names to help diagnose the issue
         print("Best results columns:", best_results.columns.tolist())
         print("All results columns:", all_results.columns.tolist())
-        
+
         # Select and rename columns for display
         def prepare_table(df):
             print("\nPreparing table with columns:", df.columns.tolist())
             try:
                 # Create a copy to avoid modifying the original
                 df = df.copy()
-                
-                required_columns = ['תאריך אירוע', 'שם פרטי', 'שם משפחה', 'זמן אישי', 'תוצאה', 'שם מרוץ']
-                missing_columns = [col for col in required_columns if col not in df.columns]
+
+                required_columns = [
+                    "תאריך אירוע",
+                    "שם פרטי",
+                    "שם משפחה",
+                    "זמן אישי",
+                    "תוצאה",
+                    "שם מרוץ",
+                ]
+                missing_columns = [
+                    col for col in required_columns if col not in df.columns
+                ]
                 if missing_columns:
                     print(f"Warning: Missing columns in DataFrame: {missing_columns}")
-                
+
                 # Combine 'תוצאה' and 'זמן אישי' into a single 'זמן' column
-                if 'תוצאה' in df.columns and 'זמן אישי' in df.columns:
-                    df['זמן'] = df['תוצאה'].fillna(df['זמן אישי'])
-                elif 'תוצאה' in df.columns:
-                    df['זמן'] = df['תוצאה']
-                elif 'זמן אישי' in df.columns:
-                    df['זמן'] = df['זמן אישי']
+                if "תוצאה" in df.columns and "זמן אישי" in df.columns:
+                    df["זמן"] = df["תוצאה"].fillna(df["זמן אישי"])
+                elif "תוצאה" in df.columns:
+                    df["זמן"] = df["תוצאה"]
+                elif "זמן אישי" in df.columns:
+                    df["זמן"] = df["זמן אישי"]
                 else:
                     print("Warning: Neither 'תוצאה' nor 'זמן אישי' columns found")
-                    df['זמן'] = ''  # Add empty time column to prevent errors
-                
+                    df["זמן"] = ""  # Add empty time column to prevent errors
+
                 # Combine first and last name into a single column
-                if 'שם פרטי' in df.columns and 'שם משפחה' in df.columns:
-                    df['שם'] = (df['שם פרטי'] + ' ' + df['שם משפחה']).str.strip()
+                if "שם פרטי" in df.columns and "שם משפחה" in df.columns:
+                    df["שם"] = (df["שם פרטי"] + " " + df["שם משפחה"]).str.strip()
                 else:
                     print("Warning: Missing name columns")
-                    df['שם'] = ''  # Add empty name column to prevent errors
-                
+                    df["שם"] = ""  # Add empty name column to prevent errors
+
                 # Initialize columns to show with required columns
-                columns_to_show = ['תאריך אירוע', 'שם', 'שם מרוץ']
-                
+                columns_to_show = ["תאריך אירוע", "שם", "שם מרוץ"]
+
                 # Add מקצה column if available (from normalized_distance)
-                if 'normalized_distance' in df.columns:
-                    df['מקצה'] = df['normalized_distance']
-                    columns_to_show.append('מקצה')
-                elif 'מקצה' in df.columns:
+                if "normalized_distance" in df.columns:
+                    df["מקצה"] = df["normalized_distance"]
+                    columns_to_show.append("מקצה")
+                elif "מקצה" in df.columns:
                     # If normalized_distance doesn't exist but מקצה does, use that
                     pass  # already in columns_to_show
-                    
+
                 # Remove the original distance column if it exists
-                if 'מרחק' in df.columns:
-                    df = df.drop(columns=['מרחק'])
-                if 'distance' in df.columns:
-                    df = df.drop(columns=['distance'])
-                
+                if "מרחק" in df.columns:
+                    df = df.drop(columns=["מרחק"])
+                if "distance" in df.columns:
+                    df = df.drop(columns=["distance"])
+
                 # Add time column
-                columns_to_show.append('זמן')
-                
+                columns_to_show.append("זמן")
+
                 # Only include columns that exist in the DataFrame
                 existing_columns = [col for col in columns_to_show if col in df.columns]
                 print("Final columns to show:", existing_columns)
-                
+
                 return df[existing_columns]
-                
+
             except Exception as e:
                 print(f"Error in prepare_table: {str(e)}")
                 raise
-        
+
         # Prepare both tables
         best_display = prepare_table(best_results)
         all_display = prepare_table(all_results)
-        
+
         # Convert DataFrames to HTML tables with custom styling
         def format_table(df, table_id):
             # return df.to_html(
@@ -140,40 +151,39 @@ def get_results():
                 border=0,
                 justify="right",
                 na_rep="",
-                escape=False
+                escape=False,
             )
 
             # הסרת class dataframe אם נכנס בטעות
             html = html.replace("dataframe", "")
 
             return html
-        
+
         # Generate HTML tables with custom styling
         best_table = format_table(best_display, "best-results-table")
         all_table = format_table(all_display, "all-results-table")
-        
+
         # Wrap tables in scrollable containers
         best_table = f'<div style="width: 100%; overflow-x: auto; margin-bottom: 2rem;">{best_table}</div>'
         all_table = f'<div style="width: 100%; overflow-x: auto;">{all_table}</div>'
-        
-        return jsonify({
-            "success": True,
-            "best_table": best_table,
-            "all_table": all_table,
-            "result_count": len(all_display)
-        })
-        
+
+        return jsonify(
+            {
+                "success": True,
+                "best_table": best_table,
+                "all_table": all_table,
+                "result_count": len(all_display),
+            }
+        )
+
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": f"An error occurred: {str(e)}"
-        }), 500
+        return jsonify({"success": False, "error": f"An error occurred: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
     # Create templates directory if it doesn't exist
     os.makedirs("templates", exist_ok=True)
-    
+
     # Create the template file if it doesn't exist
     template_path = os.path.join("templates", "single_person_index.html")
     if not os.path.exists(template_path):
@@ -307,7 +317,5 @@ if __name__ == "__main__":
 </body>
 </html>
 """)
-    
-    app.run(debug=True, port=5001)
 
-    
+    app.run(debug=True, port=5001)

@@ -30,11 +30,14 @@ import os
 from datetime import datetime
 import json
 import uuid
-from best_results_3plus_or_realtiming_race import best_race_results_per_participant   # <-- your class file
+from best_results_3plus_or_realtiming_race import (
+    best_race_results_per_participant,
+)  # <-- your class file
 
 app = Flask(__name__)
 
 HISTORY_FILE = "run_history.json"
+
 
 def save_history(entry):
 
@@ -47,7 +50,7 @@ def save_history(entry):
             except:
                 history = []
 
-    entry["id"] = str(uuid.uuid4())   # ← ID קבוע
+    entry["id"] = str(uuid.uuid4())  # ← ID קבוע
 
     history.insert(0, entry)
 
@@ -56,6 +59,7 @@ def save_history(entry):
 
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=4)
+
 
 def load_history():
     if not os.path.exists(HISTORY_FILE):
@@ -81,6 +85,7 @@ def load_history():
 
     return history
 
+
 def clean_timedelta(td):
     if pd.isna(td):
         return ""
@@ -93,6 +98,7 @@ def clean_timedelta(td):
         return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
     else:
         return f"{minutes:02d}:{seconds:02d}"
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -142,12 +148,11 @@ def index():
         # Find newly generated file (last Excel file created)
         excel_files = sorted(
             [
-                f for f in os.listdir("excel")
-                if f.endswith(".xlsx")
-                and race_name in f
-                and not f.startswith("~$")
+                f
+                for f in os.listdir("excel")
+                if f.endswith(".xlsx") and race_name in f and not f.startswith("~$")
             ],
-            reverse=True
+            reverse=True,
         )
 
         if not excel_files:
@@ -155,7 +160,7 @@ def index():
                 "index.html",
                 done=False,
                 error_message="No runners found for the selected filters.",
-                history=load_history()
+                history=load_history(),
             )
 
         output_file = "excel/" + excel_files[0]
@@ -170,7 +175,7 @@ def index():
             "gender": gender,
             "race_keyword": race_keyword,
             "category": category,
-            "file": output_file
+            "file": output_file,
         }
 
         save_history(history_entry)
@@ -180,9 +185,8 @@ def index():
                 "index.html",
                 done=False,
                 error_message="Excel file was not generated.",
-                history=load_history()
+                history=load_history(),
             )
-
 
         # Load result to show top 10
         df = pd.read_excel(output_file)
@@ -202,7 +206,6 @@ def index():
 
         fastest_time = df["race_time"].min()
         avg_time = df["race_time"].mean()
-        
 
         # Convert to clean strings
         fastest_time = clean_timedelta(fastest_time)
@@ -230,7 +233,7 @@ def index():
             fastest_time=fastest_time,
             avg_time=avg_time,
             total_runners=total_runners,
-            top3_cutoff=top3_cutoff
+            top3_cutoff=top3_cutoff,
         )
 
     history = load_history()
@@ -252,10 +255,7 @@ def delete_history(row_id):
     print("DELETE REQUEST:", row_id)
     print("IDs in file:", [h.get("id") for h in history])
 
-    history = [
-        h for h in history
-        if str(h.get("id")) != str(row_id)
-    ]
+    history = [h for h in history if str(h.get("id")) != str(row_id)]
 
     print("After filter:", [h.get("id") for h in history])
 
@@ -263,7 +263,7 @@ def delete_history(row_id):
         json.dump(history, f, ensure_ascii=False, indent=4)
 
     return {"success": True}
-    
+
 
 """
  & C:/tools/Python/python.exe c:/Users/USER/Documents/Python/running_records/running_records_windsurf/flask_app.py

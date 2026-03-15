@@ -69,11 +69,20 @@ def temp_dir():
 def sample_participants_df():
     """Sample DataFrame with race participants data."""
     data = {
-        'שם פרטי': ['דני', 'משה', 'יוסי', 'דוד', 'שמעון', 'שרה', 'רחל', 'לאה'],
-        'שם משפחה': ['כהן', 'לוי', 'ישראלי', 'בן דוד', 'פרץ', 'לוי', 'כהן', 'מזרחי'],
-        'שנת לידה': ['1980', '1975', '1985', '1990', '1978', '1982', '1976', '1988'],
-        'מגדר': ['male', 'male', 'male', 'male', 'male', 'female', 'female', 'female'],
-        'מקצה': ['10 ק"מ', '10 ק"מ', '5 ק"מ', '10 ק"מ', '21 ק"מ', '10 ק"מ', '21 ק"מ', '5 ק"מ']
+        "שם פרטי": ["דני", "משה", "יוסי", "דוד", "שמעון", "שרה", "רחל", "לאה"],
+        "שם משפחה": ["כהן", "לוי", "ישראלי", "בן דוד", "פרץ", "לוי", "כהן", "מזרחי"],
+        "שנת לידה": ["1980", "1975", "1985", "1990", "1978", "1982", "1976", "1988"],
+        "מגדר": ["male", "male", "male", "male", "male", "female", "female", "female"],
+        "מקצה": [
+            '10 ק"מ',
+            '10 ק"מ',
+            '5 ק"מ',
+            '10 ק"מ',
+            '21 ק"מ',
+            '10 ק"מ',
+            '21 ק"מ',
+            '5 ק"מ',
+        ],
     }
     return pd.DataFrame(data)
 
@@ -82,15 +91,15 @@ def sample_participants_df():
 def sample_race_results_df():
     """Sample DataFrame with race results data."""
     data = {
-        'שם פרטי': ['דני', 'דני', 'משה', 'שרה'],
-        'שם משפחה': ['כהן', 'כהן', 'לוי', 'לוי'],
-        'מקצה': ['10 ק"מ', '10 ק"מ', '10 ק"מ', '10 ק"מ'],
-        'תוצאה': ['00:45:30', '00:44:15', '00:48:20', '00:52:10'],
-        'זמן אישי': ['00:44:15', '00:45:30', '00:48:20', '00:52:10'],
-        'מיקום כללי': ['15', '12', '25', '40'],
-        'מיקום בקבוצה': ['3', '2', '5', '8'],
-        'תאריך': ['01/03/2024', '15/02/2024', '01/03/2024', '01/03/2024'],
-        'מקום': ['תל אביב', 'ירושלים', 'תל אביב', 'תל אביב']
+        "שם פרטי": ["דני", "דני", "משה", "שרה"],
+        "שם משפחה": ["כהן", "כהן", "לוי", "לוי"],
+        "מקצה": ['10 ק"מ', '10 ק"מ', '10 ק"מ', '10 ק"מ'],
+        "תוצאה": ["00:45:30", "00:44:15", "00:48:20", "00:52:10"],
+        "זמן אישי": ["00:44:15", "00:45:30", "00:48:20", "00:52:10"],
+        "מיקום כללי": ["15", "12", "25", "40"],
+        "מיקום בקבוצה": ["3", "2", "5", "8"],
+        "תאריך": ["01/03/2024", "15/02/2024", "01/03/2024", "01/03/2024"],
+        "מקום": ["תל אביב", "ירושלים", "תל אביב", "תל אביב"],
     }
     return pd.DataFrame(data)
 
@@ -203,7 +212,7 @@ def race_analyzer():
     return best_race_results_per_participant(
         url="https://regi.3plus.co.il/events/page/test",
         race_name="Test Race",
-        excel_path=None
+        excel_path=None,
     )
 
 
@@ -214,7 +223,7 @@ def excel_analyzer(temp_dir):
     return BestResultsFromExcel(
         excel_input_path=str(temp_dir / "test_input.xlsx"),
         race_name="Test Race",
-        output_excel_path=str(excel_path)
+        output_excel_path=str(excel_path),
     )
 
 
@@ -247,10 +256,10 @@ def current_year():
 def birth_years_from_age_range(current_year):
     """Calculate birth years from common age ranges."""
     return {
-        '20-29': (current_year - 29, current_year - 20),
-        '30-39': (current_year - 39, current_year - 30),
-        '40-49': (current_year - 49, current_year - 40),
-        '50-59': (current_year - 59, current_year - 50),
+        "20-29": (current_year - 29, current_year - 20),
+        "30-39": (current_year - 39, current_year - 30),
+        "40-49": (current_year - 49, current_year - 40),
+        "50-59": (current_year - 59, current_year - 50),
     }
 
 
@@ -258,8 +267,30 @@ def birth_years_from_age_range(current_year):
 def hebrew_names():
     """Sample Hebrew names for testing."""
     return {
-        'first_names': ['דני', 'משה', 'יוסי', 'דוד', 'שמעון', 'שרה', 'רחל', 'לאה', 'רבקה', 'מרים'],
-        'last_names': ['כהן', 'לוי', 'ישראלי', 'בן דוד', 'פרץ', 'מזרחי', 'גולן', 'שמיר', 'ברק', 'פרץ']
+        "first_names": [
+            "דני",
+            "משה",
+            "יוסי",
+            "דוד",
+            "שמעון",
+            "שרה",
+            "רחל",
+            "לאה",
+            "רבקה",
+            "מרים",
+        ],
+        "last_names": [
+            "כהן",
+            "לוי",
+            "ישראלי",
+            "בן דוד",
+            "פרץ",
+            "מזרחי",
+            "גולן",
+            "שמיר",
+            "ברק",
+            "פרץ",
+        ],
     }
 
 
@@ -267,11 +298,11 @@ def hebrew_names():
 def race_categories():
     """Common race categories for testing."""
     return {
-        '5K': ['5 ק"מ', '5ק"מ', '5000', '5 km'],
-        '10K': ['10 ק"מ', '10ק"מ', '10000', '9800', '10 km'],
-        '15K': ['15 ק"מ', '15ק"מ', '15000', '15 km'],
-        '21K': ['21 ק"מ', '21ק"מ', '21097', '21000', 'חצי מרתון', 'חצי מרתון תחרותי'],
-        '42K': ['42 ק"מ', '42ק"מ', '42195', 'מרתון', 'מרתון תחרותי']
+        "5K": ['5 ק"מ', '5ק"מ', "5000", "5 km"],
+        "10K": ['10 ק"מ', '10ק"מ', "10000", "9800", "10 km"],
+        "15K": ['15 ק"מ', '15ק"מ', "15000", "15 km"],
+        "21K": ['21 ק"מ', '21ק"מ', "21097", "21000", "חצי מרתון", "חצי מרתון תחרותי"],
+        "42K": ['42 ק"מ', '42ק"מ', "42195", "מרתון", "מרתון תחרותי"],
     }
 
 
@@ -279,7 +310,8 @@ def race_categories():
 def mock_flask_client():
     """Mock Flask test client."""
     from flask_app import app
-    app.config['TESTING'] = True
+
+    app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
 
@@ -288,7 +320,8 @@ def mock_flask_client():
 def mock_single_person_flask_client():
     """Mock single person Flask test client."""
     from single_person_flask_app import app
-    app.config['TESTING'] = True
+
+    app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
 
@@ -297,24 +330,29 @@ def mock_single_person_flask_client():
 @pytest.fixture
 def generate_participant_data():
     """Generate participant data with specified parameters."""
+
     def _generate(count=10, age_range=(30, 50), gender_ratio=0.7):
         """Generate specified number of participants."""
         np.random.seed(42)  # For reproducible tests
-        
-        first_names = ['דני', 'משה', 'יוסי', 'דוד', 'שמעון', 'שרה', 'רחל', 'לאה']
-        last_names = ['כהן', 'לוי', 'ישראלי', 'בן דוד', 'פרץ', 'מזרחי']
+
+        first_names = ["דני", "משה", "יוסי", "דוד", "שמעון", "שרה", "רחל", "לאה"]
+        last_names = ["כהן", "לוי", "ישראלי", "בן דוד", "פרץ", "מזרחי"]
         categories = ['10 ק"מ', '21 ק"מ', '5 ק"מ']
-        
+
         data = {
-            'שם פרטי': np.random.choice(first_names, count),
-            'שם משפחה': np.random.choice(last_names, count),
-            'שנת לידה': np.random.randint(age_range[1], age_range[0], count).astype(str),
-            'מגדר': np.random.choice(['male', 'female'], count, p=[gender_ratio, 1-gender_ratio]),
-            'מקצה': np.random.choice(categories, count)
+            "שם פרטי": np.random.choice(first_names, count),
+            "שם משפחה": np.random.choice(last_names, count),
+            "שנת לידה": np.random.randint(age_range[1], age_range[0], count).astype(
+                str
+            ),
+            "מגדר": np.random.choice(
+                ["male", "female"], count, p=[gender_ratio, 1 - gender_ratio]
+            ),
+            "מקצה": np.random.choice(categories, count),
         }
-        
+
         return pd.DataFrame(data)
-    
+
     return _generate
 
 
@@ -322,22 +360,23 @@ def generate_participant_data():
 @pytest.fixture
 def large_dataset():
     """Generate large dataset for performance testing."""
+
     def _generate(size=1000):
         """Generate dataset with specified size."""
-        first_names = ['דני', 'משה', 'יוסי', 'דוד', 'שמעון', 'שרה', 'רחל', 'לאה'] * 125
-        last_names = ['כהן', 'לוי', 'ישראלי', 'בן דוד', 'פרץ', 'מזרחי'] * 167
+        first_names = ["דני", "משה", "יוסי", "דוד", "שמעון", "שרה", "רחל", "לאה"] * 125
+        last_names = ["כהן", "לוי", "ישראלי", "בן דוד", "פרץ", "מזרחי"] * 167
         categories = ['10 ק"מ', '21 ק"מ', '5 ק"מ', '15 ק"מ', '42 ק"מ']
-        
+
         data = {
-            'שם פרטי': first_names[:size],
-            'שם משפחה': last_names[:size],
-            'שנת לידה': np.random.randint(1970, 2005, size).astype(str),
-            'מגדר': np.random.choice(['male', 'female'], size),
-            'מקצה': np.random.choice(categories, size)
+            "שם פרטי": first_names[:size],
+            "שם משפחה": last_names[:size],
+            "שנת לידה": np.random.randint(1970, 2005, size).astype(str),
+            "מגדר": np.random.choice(["male", "female"], size),
+            "מקצה": np.random.choice(categories, size),
         }
-        
+
         return pd.DataFrame(data)
-    
+
     return _generate
 
 
@@ -345,12 +384,13 @@ def large_dataset():
 @pytest.fixture
 def network_error_mock():
     """Mock network error scenarios."""
+
     class NetworkErrorMock:
         def __init__(self):
             self.call_count = 0
             self.fail_on_call = 1
             self.error_type = "timeout"
-        
+
         def get(self, url, **kwargs):
             self.call_count += 1
             if self.call_count == self.fail_on_call:
@@ -367,7 +407,7 @@ def network_error_mock():
                 response.raise_for_status.return_value = None
                 response.text = ""
                 return response
-    
+
     return NetworkErrorMock()
 
 
@@ -393,7 +433,7 @@ def pytest_collection_modifyitems(config, items):
         # Add slow marker to performance tests
         if "performance" in item.keywords:
             item.add_marker(pytest.mark.slow)
-        
+
         # Add external marker to web scraping tests
         if "web_scraping" in item.keywords:
             item.add_marker(pytest.mark.external)

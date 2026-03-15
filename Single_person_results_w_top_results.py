@@ -21,6 +21,7 @@ Dependencies:
 License: [boazusa@hotmail.com]
 ===============================================================================
 """
+
 import os
 
 import requests
@@ -28,16 +29,18 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 
+
 def fetch_and_process_results(first_name, last_name):
     # === STEP 1: Fetch data from website ===
     from urllib.parse import quote
+
     query = quote(f"{first_name} {last_name}")
     url = f"https://raceresults.shvoong.co.il/race-result/?q={query}"
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                      "AppleWebKit/537.36 (KHTML, like Gecko) "
-                      "Chrome/141.0.0.0 Safari/537.36"
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/141.0.0.0 Safari/537.36"
     }
 
     response = requests.get(url, headers=headers)
@@ -75,7 +78,7 @@ def fetch_and_process_results(first_name, last_name):
         if pd.isna(value) or str(value).strip() == "":
             return np.nan
         s = str(value).strip()
-        if s in ["10 ק\"מ", "10ק\"מ", "9800", "10000", "10 קמ"]:
+        if s in ['10 ק"מ', '10ק"מ', "9800", "10000", "10 קמ"]:
             return "10K"
         if s in ["21097", "21000", "21K", "21k"]:
             return "21K"
@@ -102,8 +105,8 @@ def fetch_and_process_results(first_name, last_name):
 
     # --- Select valid distances for best results ---
     df_for_best = df[
-        df["normalized_distance"].notna() &
-        (~df["normalized_distance"].isin(["30000", "7000"]))
+        df["normalized_distance"].notna()
+        & (~df["normalized_distance"].isin(["30000", "7000"]))
     ]
 
     # --- Get best result (min time) per distance ---
@@ -134,6 +137,7 @@ def fetch_and_process_results(first_name, last_name):
     print("✅ Ordered best results: 42K → 21K → 15K → 10K → 5K")
 
     return best_rows, df  # Optional: return the dataframes for inspection
+
 
 if __name__ == "__main__":
     best, all_results = fetch_and_process_results("בועז", "בילגורי")

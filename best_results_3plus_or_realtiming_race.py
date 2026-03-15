@@ -68,8 +68,8 @@ class best_race_results_per_participant:
             return int(y)
         if isinstance(y, str):
             y = y.strip()  # Ensure leading/trailing spaces are removed
-            if '/' in y:
-                parts = y.split('/')
+            if "/" in y:
+                parts = y.split("/")
                 try:
                     if len(parts) >= 3:
                         year = int(parts[2])
@@ -99,7 +99,7 @@ class best_race_results_per_participant:
         """
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/119.0.0.0 Safari/537.36 "
+            "Chrome/119.0.0.0 Safari/537.36 "
         }
 
         # Fetch the page
@@ -164,7 +164,9 @@ class best_race_results_per_participant:
             raise ValueError("❌ No table found on the given URL.")
 
         # Extract headers
-        headers_row = [th.get_text(strip=True) for th in table.find("thead").find_all("th")]
+        headers_row = [
+            th.get_text(strip=True) for th in table.find("thead").find_all("th")
+        ]
 
         # Extract data rows
         rows = []
@@ -179,19 +181,18 @@ class best_race_results_per_participant:
             df = df.rename(columns={"מין": "מגדר"})
 
         # Normalize gender column
-        for gender_col in ['מגדר', 'מין']:
+        for gender_col in ["מגדר", "מין"]:
             if gender_col in df.columns:
                 df[gender_col] = (
-                    df[gender_col].replace({'ז': 'male', 'נ': 'female'}).str.strip()
+                    df[gender_col].replace({"ז": "male", "נ": "female"}).str.strip()
                 )
-
 
         # Drop the first column if requested
         if drop_first_col and df.shape[1] > 0:
             df = df.iloc[:, 1:]
 
         print(f"✅✅✅ Found {len(df)} participants registered to this race. ✅✅✅")
-        
+
         return df
 
     def scrape_modiin_participants_table(self):
@@ -206,18 +207,24 @@ class best_race_results_per_participant:
         # Find all table rows
         rows = []
         for tr in soup.find_all("tr"):
-            cells = [td.get_text(strip=True).replace('\xa0', ' ') for td in tr.find_all("td")]
+            cells = [
+                td.get_text(strip=True).replace("\xa0", " ") for td in tr.find_all("td")
+            ]
             if cells:
                 rows.append(cells)
 
         # Convert to DataFrame
-        df = pd.DataFrame(rows, columns=["שם פרטי", "שם משפחה", "שנת לידה", "מגדר", "מקצה", "קבוצה"])
+        df = pd.DataFrame(
+            rows, columns=["שם פרטי", "שם משפחה", "שנת לידה", "מגדר", "מקצה", "קבוצה"]
+        )
 
         # Normalize gender column
-        for gender_col in ['מגדר', 'מין']:
+        for gender_col in ["מגדר", "מין"]:
             if gender_col in df.columns:
                 df[gender_col] = (
-                    df[gender_col].replace({'זכר': 'male', 'נקבה': 'female'}).str.strip()
+                    df[gender_col]
+                    .replace({"זכר": "male", "נקבה": "female"})
+                    .str.strip()
                 )
 
         print(f"✅✅✅ Found {len(df)} participants registered to this race. ✅✅✅")
@@ -238,7 +245,9 @@ class best_race_results_per_participant:
         self.participants_table_df = df
         return df
 
-    def get_filtered_names_3plus_realtiming(self, min_year=None, max_year=None, gender=None, race_keyword=None):
+    def get_filtered_names_3plus_realtiming(
+        self, min_year=None, max_year=None, gender=None, race_keyword=None
+    ):
         """
         Returns a list of (first_name, last_name) tuples filtered by year of birth, gender, and race.
 
@@ -253,31 +262,40 @@ class best_race_results_per_participant:
         """
         # Read Excel file
         df = self.participants_table_df.copy()
-        df['שנת לידה'] = df['שנת לידה'].apply(self.normalize_year)
+        df["שנת לידה"] = df["שנת לידה"].apply(self.normalize_year)
 
         # Apply filters
         if min_year is not None:
-            df = df[df['שנת לידה'] >= min_year]
+            df = df[df["שנת לידה"] >= min_year]
         if max_year is not None:
-            df = df[df['שנת לידה'] <= max_year]
+            df = df[df["שנת לידה"] <= max_year]
         if gender is not None:
-            df = df[df['מגדר'] == gender]
+            df = df[df["מגדר"] == gender]
         if race_keyword is not None:
             # First try direct contains
-            mask = df['מקצה'].astype(str).str.contains(race_keyword, case=False, na=False)
-            
+            mask = (
+                df["מקצה"].astype(str).str.contains(race_keyword, case=False, na=False)
+            )
+
             # Also check normalized distance if no matches found
             if not mask.any() and race_keyword in ["5K", "10K", "15K", "21K", "42K"]:
                 normalized_race = race_keyword
-                mask = df['מקצה'].apply(lambda x: str(self.normalize_distance(str(x)))) == normalized_race
-            
+                mask = (
+                    df["מקצה"].apply(lambda x: str(self.normalize_distance(str(x))))
+                    == normalized_race
+                )
+
             df = df[mask]
 
         # Build list of tuples
-        self.names_list = list(df[['שם פרטי', 'שם משפחה']].itertuples(index=False, name=None))
+        self.names_list = list(
+            df[["שם פרטי", "שם משפחה"]].itertuples(index=False, name=None)
+        )
         return self.names_list
 
-    def get_filtered_names_shvoong(self, min_year=1976, max_year=1985, gender='male', race_keyword=None):
+    def get_filtered_names_shvoong(
+        self, min_year=1976, max_year=1985, gender="male", race_keyword=None
+    ):
         """
         Returns a list of (first_name, last_name) tuples filtered by year of birth, gender, and race.
 
@@ -295,22 +313,33 @@ class best_race_results_per_participant:
         if race_keyword is not None:
             # Normalize the race keyword if it's a standard race category
             if race_keyword in ["5K", "10K", "15K", "21K", "42K"]:
-                mask = df['מקצה'].apply(lambda x: str(self.normalize_distance(str(x)))) == race_keyword
+                mask = (
+                    df["מקצה"].apply(lambda x: str(self.normalize_distance(str(x))))
+                    == race_keyword
+                )
             else:
                 # Try direct contains for non-standard race categories
-                mask = df['מקצה'].astype(str).str.contains(race_keyword, case=False, na=False)
-            
+                mask = (
+                    df["מקצה"]
+                    .astype(str)
+                    .str.contains(race_keyword, case=False, na=False)
+                )
+
             df = df[mask]
 
         # Build list of tuples
         if len(df) > 0:
-            self.names_list = list(df[['שם פרטי', 'שם משפחה']].itertuples(index=False, name=None))
+            self.names_list = list(
+                df[["שם פרטי", "שם משפחה"]].itertuples(index=False, name=None)
+            )
         else:
             self.names_list = []
-            
+
         return self.names_list
 
-    def get_filtered_names(self, min_year=1976, max_year=1985, gender='male', race_keyword=None):
+    def get_filtered_names(
+        self, min_year=1976, max_year=1985, gender="male", race_keyword=None
+    ):
         url_lower = self.url.lower()
 
         # Remember the filter years so we can reflect the age range in the output filename later
@@ -318,13 +347,28 @@ class best_race_results_per_participant:
         self.max_year_param = max_year
 
         if "realtiming.co.il" in url_lower:
-            return self.get_filtered_names_3plus_realtiming(min_year=min_year, max_year=max_year, gender=gender, race_keyword=race_keyword)
+            return self.get_filtered_names_3plus_realtiming(
+                min_year=min_year,
+                max_year=max_year,
+                gender=gender,
+                race_keyword=race_keyword,
+            )
         elif "3plus.co.il" in url_lower or "modiin" in url_lower:
-            return self.get_filtered_names_3plus_realtiming(min_year=min_year, max_year=max_year, gender=gender, race_keyword=race_keyword)
+            return self.get_filtered_names_3plus_realtiming(
+                min_year=min_year,
+                max_year=max_year,
+                gender=gender,
+                race_keyword=race_keyword,
+            )
         elif "shvoong" in url_lower:
             if "21" in race_keyword:
-                race_keyword = 'חצי מרתון'
-            return self.get_filtered_names_shvoong(min_year=min_year, max_year=max_year, gender=gender, race_keyword=race_keyword)
+                race_keyword = "חצי מרתון"
+            return self.get_filtered_names_shvoong(
+                min_year=min_year,
+                max_year=max_year,
+                gender=gender,
+                race_keyword=race_keyword,
+            )
 
     @staticmethod
     def normalize_distance(value):
@@ -332,10 +376,20 @@ class best_race_results_per_participant:
             return np.nan
         s = str(value).strip()
         # if s in ["10 ק\"מ", "10ק\"מ", "9800", "10000", "10 קמ", "10 km - competitive"]:
-        if s in ["10 ק\"מ", "10ק\"מ", "9800", "10000", "10 קמ"]:
+        if s in ['10 ק"מ', '10ק"מ', "9800", "10000", "10 קמ"]:
             return "10K"
         # if s in ["21097", "21000", "21K", "21k"]:
-        if s in ["21097", "21 ק\"מ", "21000", "21K", "21k", "חצי מרתון", "חצי מרתון תחרותי", "חצי-מרתון", "חצי_מרתון"]:
+        if s in [
+            "21097",
+            '21 ק"מ',
+            "21000",
+            "21K",
+            "21k",
+            "חצי מרתון",
+            "חצי מרתון תחרותי",
+            "חצי-מרתון",
+            "חצי_מרתון",
+        ]:
             return "21K"
         if s in ["42195", "42K", "42k"]:
             return "42K"
@@ -362,8 +416,8 @@ class best_race_results_per_participant:
 
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                          "AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/141.0.0.0 Safari/537.36"
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/141.0.0.0 Safari/537.36"
         }
 
         try:
@@ -454,14 +508,14 @@ class best_race_results_per_participant:
             if min_year is not None and max_year is not None:
                 current_year = datetime.now().year
                 youngest_age = current_year - max_year  # higher birth year -> younger
-                oldest_age = current_year - min_year    # lower birth year -> older
+                oldest_age = current_year - min_year  # lower birth year -> older
                 age_suffix = f"_{youngest_age}-{oldest_age}"
 
             output_file = f"excel/{timestamp}_{self.race_name}_best_results_{category}{age_suffix}.xlsx"
             with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
                 df_best.to_excel(writer, index=False)
             print(f"✅ Saved best results for category '{category}' to {output_file}")
-            
+
         return df_best
 
 
@@ -488,7 +542,9 @@ if __name__ == "__main__":
     df_participants = test.scrape_participants_table()
     print(df_participants.head(10))
 
-    names_filtered = test.get_filtered_names(min_year=1970, max_year=2005, gender='male', race_keyword='21')
+    names_filtered = test.get_filtered_names(
+        min_year=1970, max_year=2005, gender="male", race_keyword="21"
+    )
     print(f"names_list_filtered = {names_filtered}")
 
     race_category = "21K"  # Could be "42K", "21K", "15K", "10K", "5K", To find best result in a category

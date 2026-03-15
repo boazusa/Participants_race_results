@@ -23,7 +23,7 @@ import requests_mock
 from bs4 import BeautifulSoup
 
 # Add project root to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Import project modules
 from best_results_3plus_or_realtiming_race import best_race_results_per_participant
@@ -43,7 +43,7 @@ class TestBestRaceResultsPerParticipant:
             "שם משפחה": ["Doe", "Smith"],
             "שנת לידה": [1980, 1990],
             "מגדר": ["male", "female"],
-            "מקצה": ["10K", "21K"]
+            "מקצה": ["10K", "21K"],
         }
         return pd.DataFrame(data)
 
@@ -56,11 +56,13 @@ class TestBestRaceResultsPerParticipant:
 
     def test_normalize_distance(self):
         """Test distance normalization."""
-        assert best_race_results_per_participant.normalize_distance("10 ק\"מ") == "10K"
+        assert best_race_results_per_participant.normalize_distance('10 ק"מ') == "10K"
         assert best_race_results_per_participant.normalize_distance("21K") == "21K"
         assert best_race_results_per_participant.normalize_distance("") is np.nan
 
-    def test_scrape_3plus_participants_table(self, requests_mock, sample_participants_df):
+    def test_scrape_3plus_participants_table(
+        self, requests_mock, sample_participants_df
+    ):
         """Test scraping participants from 3plus site."""
         mock_html = """
         <table id="m_ph4wp1_tblData">
@@ -72,14 +74,18 @@ class TestBestRaceResultsPerParticipant:
         </table>
         """
         requests_mock.get("https://example.com", text=mock_html)
-        runner = best_race_results_per_participant("https://example.com", race_name="Test")
+        runner = best_race_results_per_participant(
+            "https://example.com", race_name="Test"
+        )
         df = runner.scrape_3plus_participants_table()
         assert len(df) == 2
         assert df.iloc[0]["שם פרטי"] == "John"
 
     def test_get_filtered_names(self, sample_participants_df):
         """Test filtering names."""
-        runner = best_race_results_per_participant("https://realtiming.co.il/test", race_name="Test")
+        runner = best_race_results_per_participant(
+            "https://realtiming.co.il/test", race_name="Test"
+        )
         runner.participants_table_df = sample_participants_df
         names = runner.get_filtered_names(min_year=1975, max_year=1985, gender="male")
         assert names == [("John", "Doe")]

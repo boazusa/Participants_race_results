@@ -16,17 +16,18 @@ License: [boazusa@hotmail.com]
 ===============================================================================
 """
 
+
 class MockResponses:
     """Collection of mock HTTP responses for testing."""
-    
+
     @staticmethod
     def get_3plus_participants_response():
         """Mock response for 3plus participants page."""
         return {
-            'url': 'https://regi.3plus.co.il/events/page/17492',
-            'status_code': 200,
-            'headers': {'Content-Type': 'text/html; charset=utf-8'},
-            'text': '''
+            "url": "https://regi.3plus.co.il/events/page/17492",
+            "status_code": 200,
+            "headers": {"Content-Type": "text/html; charset=utf-8"},
+            "text": """
             <!DOCTYPE html>
             <html dir="rtl" lang="he">
             <head>
@@ -99,17 +100,17 @@ class MockResponses:
                 </div>
             </body>
             </html>
-            '''
+            """,
         }
-    
+
     @staticmethod
     def get_realtiming_participants_response():
         """Mock response for realtiming participants page."""
         return {
-            'url': 'https://www.realtiming.co.il/events/1242/list',
-            'status_code': 200,
-            'headers': {'Content-Type': 'text/html; charset=utf-8'},
-            'text': '''
+            "url": "https://www.realtiming.co.il/events/1242/list",
+            "status_code": 200,
+            "headers": {"Content-Type": "text/html; charset=utf-8"},
+            "text": """
             <!DOCTYPE html>
             <html dir="rtl" lang="he">
             <head>
@@ -168,17 +169,17 @@ class MockResponses:
                 </div>
             </body>
             </html>
-            '''
+            """,
         }
-    
+
     @staticmethod
     def get_shvoong_search_results_response():
         """Mock response for shvoong search results page."""
         return {
-            'url': 'https://raceresults.shvoong.co.il/race-result/?q=דני%20כהן',
-            'status_code': 200,
-            'headers': {'Content-Type': 'text/html; charset=utf-8'},
-            'text': '''
+            "url": "https://raceresults.shvoong.co.il/race-result/?q=דני%20כהן",
+            "status_code": 200,
+            "headers": {"Content-Type": "text/html; charset=utf-8"},
+            "text": """
             <!DOCTYPE html>
             <html dir="rtl" lang="he">
             <head>
@@ -241,17 +242,17 @@ class MockResponses:
                 </div>
             </body>
             </html>
-            '''
+            """,
         }
-    
+
     @staticmethod
     def get_modiin_participants_response():
         """Mock response for Modiin participants page."""
         return {
-            'url': 'https://www.matnasmodiin.org.il/html5/UAPI.TAF?get=209',
-            'status_code': 200,
-            'headers': {'Content-Type': 'text/html; charset=utf-8'},
-            'text': '''
+            "url": "https://www.matnasmodiin.org.il/html5/UAPI.TAF?get=209",
+            "status_code": 200,
+            "headers": {"Content-Type": "text/html; charset=utf-8"},
+            "text": """
             <!DOCTYPE html>
             <html dir="rtl" lang="he">
             <head>
@@ -289,28 +290,28 @@ class MockResponses:
                 </div>
             </body>
             </html>
-            '''
+            """,
         }
-    
+
     @staticmethod
     def get_error_responses():
         """Collection of error responses for testing error handling."""
         return {
-            'timeout': {
-                'exception': 'Timeout',
-                'message': 'Request timeout after 30 seconds'
+            "timeout": {
+                "exception": "Timeout",
+                "message": "Request timeout after 30 seconds",
             },
-            '404_not_found': {
-                'status_code': 404,
-                'text': '<html><body><h1>404 Not Found</h1></body></html>'
+            "404_not_found": {
+                "status_code": 404,
+                "text": "<html><body><h1>404 Not Found</h1></body></html>",
             },
-            '500_server_error': {
-                'status_code': 500,
-                'text': '<html><body><h1>Internal Server Error</h1></body></html>'
+            "500_server_error": {
+                "status_code": 500,
+                "text": "<html><body><h1>Internal Server Error</h1></body></html>",
             },
-            'no_table_found': {
-                'status_code': 200,
-                'text': '''
+            "no_table_found": {
+                "status_code": 200,
+                "text": """
                 <!DOCTYPE html>
                 <html>
                 <head><title>No Table</title></head>
@@ -318,15 +319,15 @@ class MockResponses:
                     <div>No participants table found</div>
                 </body>
                 </html>
-                '''
+                """,
             },
-            'malformed_html': {
-                'status_code': 200,
-                'text': '<html><body><div>Malformed HTML content</div></body>'
+            "malformed_html": {
+                "status_code": 200,
+                "text": "<html><body><div>Malformed HTML content</div></body>",
             },
-            'empty_table': {
-                'status_code': 200,
-                'text': '''
+            "empty_table": {
+                "status_code": 200,
+                "text": """
                 <!DOCTYPE html>
                 <html>
                 <body>
@@ -336,18 +337,18 @@ class MockResponses:
                     </table>
                 </body>
                 </html>
-                '''
-            }
+                """,
+            },
         }
-    
+
     @staticmethod
     def get_large_dataset_response():
         """Mock response with large dataset for performance testing."""
         rows = []
         for i in range(1000):
-            distance = "10 ק\"מ" if i % 3 == 0 else "21 ק\"מ" if i % 3 == 1 else "5 ק\"מ"
+            distance = '10 ק"מ' if i % 3 == 0 else '21 ק"מ' if i % 3 == 1 else '5 ק"מ'
             gender = "ז" if i % 2 == 0 else "נ"
-            rows.append(f'''
+            rows.append(f"""
                 <tr>
                     <td>{i+1}</td>
                     <td>שם{i}</td>
@@ -357,13 +358,13 @@ class MockResponses:
                     <td>{distance}</td>
                     <td>קבוצה{i}</td>
                 </tr>
-            ''')
-        
+            """)
+
         return {
-            'url': 'https://regi.3plus.co.il/events/page/large',
-            'status_code': 200,
-            'headers': {'Content-Type': 'text/html; charset=utf-8'},
-            'text': f'''
+            "url": "https://regi.3plus.co.il/events/page/large",
+            "status_code": 200,
+            "headers": {"Content-Type": "text/html; charset=utf-8"},
+            "text": f"""
             <!DOCTYPE html>
             <html dir="rtl" lang="he">
             <head>
@@ -389,59 +390,59 @@ class MockResponses:
                 </table>
             </body>
             </html>
-            '''
+            """,
         }
 
 
 class ResponseBuilder:
     """Builder for creating custom mock responses."""
-    
+
     def __init__(self):
         self.url = "https://example.com"
         self.status_code = 200
-        self.headers = {'Content-Type': 'text/html; charset=utf-8'}
+        self.headers = {"Content-Type": "text/html; charset=utf-8"}
         self.text = ""
         self.exception = None
-    
+
     def with_url(self, url):
         """Set URL for the response."""
         self.url = url
         return self
-    
+
     def with_status(self, status_code):
         """Set status code for the response."""
         self.status_code = status_code
         return self
-    
+
     def with_headers(self, headers):
         """Set headers for the response."""
         self.headers.update(headers)
         return self
-    
+
     def with_html(self, html_content):
         """Set HTML content for the response."""
         self.text = html_content
         return self
-    
+
     def with_exception(self, exception_type, message=""):
         """Set exception for the response."""
         self.exception = exception_type
         self.exception_message = message
         return self
-    
+
     def build(self):
         """Build the mock response."""
         response = {
-            'url': self.url,
-            'status_code': self.status_code,
-            'headers': self.headers,
-            'text': self.text
+            "url": self.url,
+            "status_code": self.status_code,
+            "headers": self.headers,
+            "text": self.text,
         }
-        
+
         if self.exception:
-            response['exception'] = self.exception
-            response['exception_message'] = getattr(self, 'exception_message', "")
-        
+            response["exception"] = self.exception
+            response["exception_message"] = getattr(self, "exception_message", "")
+
         return response
 
 
@@ -450,7 +451,7 @@ def create_3plus_response(participants_data):
     """Create a 3plus response with custom participant data."""
     rows = []
     for i, participant in enumerate(participants_data, 1):
-        rows.append(f'''
+        rows.append(f"""
             <tr>
                 <td>{i}</td>
                 <td>{participant.get('first_name', 'שם')}</td>
@@ -460,9 +461,9 @@ def create_3plus_response(participants_data):
                 <td>{participant.get('race', '10 ק"מ')}</td>
                 <td>{participant.get('team', 'קבוצה')}</td>
             </tr>
-        ''')
-    
-    html = f'''
+        """)
+
+    html = f"""
     <!DOCTYPE html>
     <html dir="rtl" lang="he">
     <head>
@@ -488,8 +489,8 @@ def create_3plus_response(participants_data):
         </table>
     </body>
     </html>
-    '''
-    
+    """
+
     return ResponseBuilder().with_html(html).build()
 
 
@@ -497,7 +498,7 @@ def create_shvoong_results_response(results_data):
     """Create a shvoong results response with custom results data."""
     rows = []
     for result in results_data:
-        rows.append(f'''
+        rows.append(f"""
             <tr>
                 <td>{result.get('date', '01/01/2024')}</td>
                 <td>{result.get('location', 'תל אביב')}</td>
@@ -509,9 +510,9 @@ def create_shvoong_results_response(results_data):
                 <td>{result.get('overall_position', '10')}</td>
                 <td>{result.get('group_position', '2')}</td>
             </tr>
-        ''')
-    
-    html = f'''
+        """)
+
+    html = f"""
     <!DOCTYPE html>
     <html dir="rtl" lang="he">
     <head>
@@ -539,6 +540,6 @@ def create_shvoong_results_response(results_data):
         </table>
     </body>
     </html>
-    '''
-    
+    """
+
     return ResponseBuilder().with_html(html).build()

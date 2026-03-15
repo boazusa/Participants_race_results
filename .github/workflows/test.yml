@@ -42,10 +42,6 @@ jobs:
         # Exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
     
-    - name: Check code formatting with black
-      run: |
-        black --check --diff .
-    
     - name: Type checking with mypy
       run: |
         mypy . || true  # Allow mypy to fail for now

@@ -29,7 +29,7 @@ import sys
 import os
 
 # Add the parent directory to the path to allow importing the module under test
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Import the module to be tested
 import best_results_3plus_or_realtiming_race as br
@@ -39,8 +39,8 @@ from best_results_3plus_or_realtiming_race import best_race_results_per_particip
 class TestNormalizeDistance(unittest.TestCase):
     def test_10k_variants(self):
         f = best_race_results_per_participant.normalize_distance
-        self.assertEqual(f("10 ק\"מ"), "10K")
-        self.assertEqual(f("10ק\"מ"), "10K")
+        self.assertEqual(f('10 ק"מ'), "10K")
+        self.assertEqual(f('10ק"מ'), "10K")
         self.assertEqual(f("9800"), "10K")
         self.assertEqual(f("10000"), "10K")
 
@@ -52,8 +52,8 @@ class TestNormalizeDistance(unittest.TestCase):
 
     def test_5k_and_15k_detection(self):
         f = best_race_results_per_participant.normalize_distance
-        self.assertEqual(f("15 ק\"מ"), "15K")
-        self.assertEqual(f("5 ק\"מ"), "5K")
+        self.assertEqual(f('15 ק"מ'), "15K")
+        self.assertEqual(f('5 ק"מ'), "5K")
 
     def test_empty_or_nan(self):
         f = best_race_results_per_participant.normalize_distance
