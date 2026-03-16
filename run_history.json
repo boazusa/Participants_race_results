@@ -1,5 +1,31 @@
 [
     {
+        "timestamp": "2026-03-16 21:01:20",
+        "event_url": "view-source:https://regi.3plus.co.il/events/page/17492",
+        "race_name": "נס ציונה",
+        "min_age": 40,
+        "max_age": 49,
+        "age_range": "40-49",
+        "gender": "male",
+        "race_keyword": "10",
+        "category": "10K",
+        "file": "excel/2026_03_16_21_01_19_נס ציונה_best_results_10K_40-49.xlsx",
+        "id": "9f4641dd-ca8c-467d-b8e4-d7f6ff2ed948"
+    },
+    {
+        "timestamp": "2026-03-15 19:49:07",
+        "event_url": "view-source:https://regi.3plus.co.il/events/page/17492",
+        "race_name": "נס ציונה",
+        "min_age": 40,
+        "max_age": 49,
+        "age_range": "40-49",
+        "gender": "male",
+        "race_keyword": "10",
+        "category": "10K",
+        "file": "excel/2026_03_15_19_49_06_נס ציונה_best_results_10K_40-49.xlsx",
+        "id": "b2d7393b-08f2-48f3-a95d-9c2fbd009ab2"
+    },
+    {
         "timestamp": "2026-03-15 02:17:12",
         "event_url": "view-source:https://www.matnasmodiin.org.il/html5/UAPI.TAF?get=218&nocache=1",
         "race_name": "מודיעין",
