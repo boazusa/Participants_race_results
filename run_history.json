@@ -299,6 +299,19 @@
         "id": "ab49770d-a278-4f67-8970-40bb9f475736"
     },
     {
+        "timestamp": "2026-03-06 16:27:12",
+        "event_url": "https://www.realtiming.co.il/events/1245/list",
+        "race_name": "ראש העין",
+        "min_age": 40,
+        "max_age": 49,
+        "age_range": "40-49",
+        "gender": "male",
+        "race_keyword": "10",
+        "category": "10K",
+        "file": "excel/2026_03_06_16_27_12_ראש העין_best_results_10K_40-49.xlsx",
+        "id": "cc2be3cb-2225-4641-9b2d-404de0c4abc0"
+    },
+    {
         "timestamp": "2026-03-05 16:31:29",
         "event_url": "view-source:https://regi.3plus.co.il/events/page/17461",
         "race_name": "הר טוב ",
