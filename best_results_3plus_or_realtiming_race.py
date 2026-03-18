@@ -107,8 +107,10 @@ class best_race_results_per_participant:
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Find the participants table
-        table = soup.find("table", id="m_ph4wp1_tblData")
+        # Find the participants table - try both 3plus and Ashkelon table IDs
+        table = soup.find("table", id="m_ph4wp1_tblData")  # 3plus
+        if not table:
+            table = soup.find("table", id="m_ph3wp1_tblData")  # Ashkelon
         if not table:
             raise ValueError("Participants table not found in the HTML source.")
 
@@ -124,7 +126,7 @@ class best_race_results_per_participant:
         # Create DataFrame
         df = pd.DataFrame(rows, columns=table_headers)
 
-        print(f"✅✅✅ Found {len(df)} participants registered to this race. ✅✅✅")
+        print(f"Found {len(df)} participants registered to this race.")
 
         return df
 
@@ -235,7 +237,7 @@ class best_race_results_per_participant:
         url_lower = self.url.lower()
         if "realtiming.co.il" in url_lower:
             df = self.scrape_realtiming_participants_table()
-        elif "3plus.co.il" in url_lower or "shvoong" in url_lower:
+        elif "3plus.co.il" in url_lower or "shvoong" in url_lower or "ashkelon.runisrael.org.il" in url_lower:
             df = self.scrape_3plus_participants_table()
         elif "modiin" in url_lower:
             df = self.scrape_modiin_participants_table()
@@ -353,7 +355,7 @@ class best_race_results_per_participant:
                 gender=gender,
                 race_keyword=race_keyword,
             )
-        elif "3plus.co.il" in url_lower or "modiin" in url_lower:
+        elif "3plus.co.il" in url_lower or "modiin" in url_lower or "ashkelon.runisrael.org.il" in url_lower:
             return self.get_filtered_names_3plus_realtiming(
                 min_year=min_year,
                 max_year=max_year,
