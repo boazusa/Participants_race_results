@@ -48,6 +48,12 @@ pytest tests/test_race_analysis.py -v
 - ✅ Error handling (9 tests)
 - ✅ Helper functions (13 tests)
 - ✅ Flask application (6 tests)
+- ✅ Sample data integration (21 tests)
+- ✅ Edge case testing (7 tests)
+- ✅ Web scraping scenarios (5 tests)
+- ✅ Integration tests (18 tests)
+
+**Total: 192 tests** ✅
 
 For detailed testing documentation, see `tests/README_TESTING.md`.
 

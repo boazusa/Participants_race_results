@@ -1,0 +1,5 @@
+# These tests work perfectly:
+pytest tests/test_race_analysis.py::TestRaceAnalyzerInitialization -v
+pytest tests/test_race_analysis.py::TestNormalizeYear -v
+pytest tests/test_race_analysis.py::TestNormalizeDistance -v
+pytest tests/test_race_analysis.py::TestChooseBestTimeString -v

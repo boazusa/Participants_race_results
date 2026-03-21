@@ -164,7 +164,7 @@ class SampleDataGenerator:
 
     @classmethod
     def generate_participants(
-        cls, count=10, age_range=(20, 60), gender_ratio=0.6, seed=None
+        cls, count=10, age_range=(60, 20), gender_ratio=0.6, seed=None
     ):
         """Generate participants DataFrame."""
         if seed:
@@ -322,7 +322,7 @@ class SampleDataGenerator:
         """Generate Excel file with participants and results."""
         # Generate participants
         participants_df = cls.generate_participants(
-            count=participants_count, age_range=(20, 65), gender_ratio=0.55, seed=seed
+            count=participants_count, age_range=(65, 20), gender_ratio=0.55, seed=seed
         )
 
         # Generate race results

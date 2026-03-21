@@ -24,10 +24,13 @@ tests/
 ├── test_integration.py         # Integration tests
 ├── test_performance.py         # Performance and load tests
 ├── test_memory_profiling.py    # Memory profiling tests
+├── test_sample_data_integration.py  # Sample data integration tests (NEW)
+├── test_edge_cases_integration.py    # Edge case integration tests (NEW)
+├── test_web_scraping_scenarios.py   # Web scraping scenario tests (NEW)
 ├── fixtures/                   # Test fixtures and mock data
 │   ├── __init__.py
 │   ├── mock_responses.py       # Mock HTTP responses
-│   └── sample_data.py          # Sample test data generators
+│   └── sample_data.py          # Sample test data generators (ACTIVELY USED)
 └── utils/                      # Test utilities and helpers
     ├── __init__.py
     └── test_helpers.py         # Common test utilities

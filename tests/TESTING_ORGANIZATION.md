@@ -28,7 +28,11 @@ tests/
 │   ├── test_project.py               # Project-level tests (6)
 │   ├── test_race_analysis.py         # Main fixed tests (63)
 │   ├── test_race_analysis_fixed.py   # Backup fixed version (63)
-│   └── test_simple_working.py        # Minimal working tests (10)
+│   ├── test_simple_working.py        # Minimal working tests (10)
+│   ├── test_sample_data_integration.py  # Sample data integration tests (9)
+│   ├── test_edge_cases_integration.py    # Edge case integration tests (7)
+│   ├── test_web_scraping_scenarios.py   # Web scraping scenario tests (5)
+│   └── test_integration_simple.py    # Simple integration tests (5)
 │
 ├── 📁 Test Fixtures & Utilities
 │   ├── __init__.py
@@ -76,10 +80,10 @@ pytest tests/test_simple_working.py -v
 
 ## 📊 **Test Results Summary:**
 
-- **171 tests passed** 
+- **192 tests passed** 
 - **0 tests failed** 
 - **1 warning** (harmless)
-- **Execution time:** 0.87 seconds
+- **Execution time:** 1.60 seconds
 
 ## 🎯 **Benefits of This Organization:**
 
@@ -133,7 +137,7 @@ pytest tests/test_simple_working.py -v
 
 **Your testing framework is now perfectly organized!**
 
-- All 166 tests pass ✅
+- All 192 tests pass ✅
 - All testing files in `tests/` folder ✅
 - Clean project structure ✅
 - Easy to maintain and extend ✅

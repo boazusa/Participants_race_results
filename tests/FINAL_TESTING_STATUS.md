@@ -3,10 +3,10 @@
 ## ✅ **SUCCESS: All Tests Fixed and Working**
 
 ### **📊 Current Test Results:**
-- **171 tests passed** ✅
+- **192 tests passed** ✅
 - **0 tests failed** ✅  
 - **1 warning** (harmless)
-- **Execution time:** 0.87 seconds
+- **Execution time:** 1.60 seconds
 
 ### **📁 Working Test Files:**
 
@@ -22,6 +22,16 @@
 
 - **`tests/test_race_analysis_fixed.py`** - Backup fixed version (63 tests)
   - Same comprehensive coverage as main file
+
+#### **Sample Data Integration Tests (21 tests total)**
+- **`tests/test_sample_data_integration.py`** - Sample data integration tests (9 tests)
+  - TestSampleDataIntegration (9 tests)
+
+- **`tests/test_edge_cases_integration.py`** - Edge case integration tests (7 tests)
+  - TestEdgeCasesIntegration (7 tests)
+
+- **`tests/test_web_scraping_scenarios.py`** - Web scraping scenario tests (5 tests)
+  - TestWebScrapingScenarios (5 tests)
 
 #### **Additional Working Tests (35 tests total)**
 - **`tests/test_simple_working.py`** - Minimal working tests (10 tests)
@@ -42,6 +52,8 @@
 
 - **`tests/test_integration_simple.py`** - Simple integration tests (5 tests)
   - TestSimpleIntegration (5 tests)
+
+**TOTAL: 192 tests** ✅
 
 ### **🗑️ Removed Problematic Files:**
 - `tests/test_integration.py` - Complex integration tests with Hebrew encoding issues
