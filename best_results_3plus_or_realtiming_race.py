@@ -36,7 +36,7 @@ from requests.exceptions import RequestException, Timeout
 
 
 class best_race_results_per_participant:
-    def __init__(self, url, race_name=None, excel_path=None):
+    def __init__(self, url, race_name=None, excel_path=None, years_back=5):
         """
         :param url:
         :param excel_path:
@@ -51,6 +51,7 @@ class best_race_results_per_participant:
         self.race_name = race_name
         self.output_file = ""
         self.participants_table_df = None
+        self.years_back = years_back
 
         # Create excel directory if it doesn't exist
         excel_dir = "excel"
@@ -412,7 +413,7 @@ class best_race_results_per_participant:
                 return val
         return ""
 
-    def fetch_best_result(self, first_name, last_name, category, timeout_seconds=10):
+    def fetch_best_result(self, first_name, last_name, category, timeout_seconds=10, years_back=5):
         query = quote(f"{first_name} {last_name}")
         url = f"https://raceresults.shvoong.co.il/race-result/?q={query}"
 
@@ -457,6 +458,10 @@ class best_race_results_per_participant:
         rows = [r + [""] * (max_cols - len(r)) for r in rows]
 
         df = pd.DataFrame(rows, columns=headers)
+        
+        # Debug: Show available columns
+        # print(f"🔍 Available columns for {first_name} {last_name}: {list(df.columns)}")
+        print(f"🔍 Available results for {first_name} {last_name}")
 
         # Normalize category and pick best time string
         df["normalized_distance"] = df["מקצה"].apply(self.normalize_distance)
@@ -464,6 +469,58 @@ class best_race_results_per_participant:
 
         # Convert to timedelta for sorting
         df["race_time"] = pd.to_timedelta(df["תוצאה מיטבית"], errors="coerce")
+
+        # Filter by date - only include results from past N years
+        current_year = datetime.now().year
+        years_ago = current_year - years_back
+        
+        # Try to find a date column and filter by year
+        date_columns = [
+            "תאריך", "שנה", "מרוץ", "תאריך מרוץ", "שנה אירוע", "תאריך תחרות", "מרוץ תאריך",
+            "תחרות", "אירוע", "תאריך אירוע", "שנת תחרות", "תאריך התחרות",
+            "Date", "Year", "Race Date", "Event Date", "Competition Date"
+        ]
+        date_col = None
+        for col in date_columns:
+            if col in df.columns:
+                date_col = col
+                break
+        
+        if date_col:
+            # Extract year from date column and filter
+            df[date_col] = df[date_col].astype(str)
+            
+            # Try multiple patterns to extract year
+            # Pattern 1: Direct 4-digit year
+            df["race_year"] = df[date_col].str.extract(r'(\d{4})')
+            
+            # Pattern 2: If no 4-digit year, try to extract from date formats like dd/mm/yyyy
+            if df["race_year"].isna().all():
+                df["race_year"] = df[date_col].str.extract(r'(\d{2,4})\s*[-/]\d{1,2}[-/]\d{1,2}$')
+                # Convert 2-digit years to 4-digit (assuming 2000s)
+                df["race_year"] = df["race_year"].apply(
+                    lambda x: int(f"20{x}") if pd.notna(x) and len(str(int(x))) == 2 else x
+                )
+            
+            # Pattern 3: Try to find any 4-digit number in the string
+            if df["race_year"].isna().all():
+                df["race_year"] = df[date_col].str.extract(r'.*?(\d{4}).*?')
+            
+            df["race_year"] = pd.to_numeric(df["race_year"], errors="coerce")
+            
+            # Filter to only include results from past N years
+            valid_years = df[df["race_year"].notna()]
+            if not valid_years.empty:
+                df = df[df["race_year"] >= years_ago]
+                df = df[df["race_year"] <= current_year]
+                # Debug: Filtered to results, results in date range
+                # print(f"📅 Filtered to results from {years_ago}-{current_year} (past {years_back} years)")
+                # print(f"📊 Found { len(df)} results in date range")
+            else:
+                print(f"⚠️ No valid years found in date column '{date_col}'")
+        else:
+            print(f"⚠️ No date column found, including all historical results")
+            print(f"🔍 Searched for: {date_columns}")
 
         # Filter by category
         df_cat = df[df["normalized_distance"] == category]
@@ -484,7 +541,7 @@ class best_race_results_per_participant:
         best_results = []
 
         for first_name, last_name in self.names_list:
-            best_row = self.fetch_best_result(first_name, last_name, category)
+            best_row = self.fetch_best_result(first_name, last_name, category, years_back=self.years_back)
             if best_row is not None:
                 best_results.append(best_row)
 

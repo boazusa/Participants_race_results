@@ -124,6 +124,7 @@ def index():
             url=event_url,
             race_name=race_name,
             excel_path=True,
+            years_back=5,  # Filter to past 5 years only (2021-2026)
         )
 
         # scrape participants
