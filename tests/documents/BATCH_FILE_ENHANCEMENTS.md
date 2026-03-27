@@ -56,16 +56,16 @@ python -m pytest -v --tb=short --color=yes --durations=10
 ### **🚀 Available Files:**
 
 #### **1. `run_tests.bat`** (Enhanced)
-- ✅ All 171 tests
-- ✅ Professional formatting
-- ✅ Emoji indicators (may not work in all consoles)
-- ✅ Detailed statistics
+- ✅ All 192 tests
+-- ✅ Professional formatting
+-- ✅ Emoji indicators (may not work in all consoles)
+-- ✅ Detailed statistics
 
 #### **2. `run_tests_professional.bat`** (New)
-- ✅ All 171 tests  
-- ✅ Clean console output
-- ✅ Professional status indicators
-- ✅ Performance timing
+- ✅ All 192 tests  
+-- ✅ Clean console output
+-- ✅ Professional status indicators
+-- ✅ Performance timing
 - ✅ Compatible with all Windows consoles
 
 #### **3. `RUN_WORKING_TESTS.bat`** (Enhanced)

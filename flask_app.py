@@ -238,7 +238,27 @@ def index():
 
     history = load_history()
 
-    return render_template("index.html", done=False, history=history)
+    # Handle edit parameter - populate form with history data
+    edit_data = {}
+    edit_id = request.args.get('edit')
+    if edit_id and history:
+        for run in history:
+            if run.get('id') == edit_id:
+                edit_data = {
+                    'event_url': run.get('event_url', ''),
+                    'race_name': run.get('race_name', ''),
+                    'min_age': run.get('min_age', ''),
+                    'max_age': run.get('max_age', ''),
+                    'gender': run.get('gender', ''),
+                    'race_keyword': run.get('race_keyword', ''),
+                    'category': run.get('category', '')
+                }
+                break
+    else:
+        # Ensure edit_data is always defined for template
+        edit_data = {}
+
+    return render_template("index.html", done=False, history=history, edit_data=edit_data)
 
 
 @app.route("/download")

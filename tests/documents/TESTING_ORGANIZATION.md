@@ -11,13 +11,6 @@ tests/
 │   ├── requirements-dev.txt          # Development dependencies  
 │   └── tox.ini                       # Multi-environment testing
 │
-├── 📄 Documentation Files
-│   ├── README_TESTING.md             # Complete testing guide
-│   ├── TESTING_FRAMEWORK_SUMMARY.md  # Implementation overview
-│   ├── RUN_TESTS_GUIDE.md            # Usage instructions
-│   ├── FINAL_TESTING_STATUS.md       # Current status summary
-│   └── TESTING_ORGANIZATION.md       # This file
-│
 ├── 📄 Execution Scripts
 │   ├── run_tests.bat                 # General test runner
 │   └── RUN_WORKING_TESTS.bat         # Working tests runner
@@ -45,11 +38,24 @@ tests/
 │       ├── __init__.py
 │       └── test_helpers.py           # Test utilities
 │
-└── 📁 CI/CD Configuration
-    └── .github/
-        └── workflows/
-            ├── test.yml               # Main CI pipeline
-            └── performance.yml        # Performance monitoring
+├── 📁 CI/CD Configuration
+│   └── .github/
+│       └── workflows/
+│           ├── test.yml               # Main CI pipeline
+│           └── performance.yml        # Performance monitoring
+│
+└── 📁 documents/
+    ├── 📄 Testing Documentation
+    │   ├── README_TESTING.md             # Complete testing guide
+    │   ├── TESTING_FRAMEWORK_SUMMARY.md  # Implementation overview
+    │   ├── RUN_TESTS_GUIDE.md            # Usage instructions
+    │   ├── FINAL_TESTING_STATUS.md       # Current status summary
+    │   ├── FINAL_INTEGRATION_STATUS.md    # Integration test status
+    │   ├── TESTING_ORGANIZATION.md       # This file
+    │   └── BATCH_FILE_ENHANCEMENTS.md   # Batch file improvements
+    │
+    └── 📄 Project Documentation
+        └── [Other project docs...]
 ```
 
 ## 🚀 **How to Run Tests**
@@ -128,10 +134,12 @@ pytest tests/test_simple_working.py -v
 
 ## 📚 **Documentation Files:**
 
-- **README_TESTING.md** - Complete testing guide
-- **RUN_TESTS_GUIDE.md** - Quick start instructions
-- **FINAL_TESTING_STATUS.md** - Current implementation status
-- **TESTING_FRAMEWORK_SUMMARY.md** - Technical overview
+- **README_TESTING.md** - Complete testing guide (in `tests/documents/`)
+- **RUN_TESTS_GUIDE.md** - Quick start instructions (in `tests/documents/`)
+- **FINAL_TESTING_STATUS.md** - Current implementation status (in `tests/documents/`)
+- **TESTING_FRAMEWORK_SUMMARY.md** - Technical overview (in `tests/documents/`)
+- **FINAL_INTEGRATION_STATUS.md** - Integration test status (in `tests/documents/`)
+- **BATCH_FILE_ENHANCEMENTS.md** - Batch file improvements (in `tests/documents/`)
 
 ## 🎉 **Bottom Line:**
 

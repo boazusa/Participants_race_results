@@ -193,7 +193,7 @@ class best_race_results_per_participant:
         if drop_first_col and df.shape[1] > 0:
             df = df.iloc[:, 1:]
 
-        print(f"✅✅✅ Found {len(df)} participants registered to this race. ✅✅✅")
+        print(f"Found {len(df)} participants registered to this race.")
 
         return df
 
@@ -229,7 +229,7 @@ class best_race_results_per_participant:
                     .str.strip()
                 )
 
-        print(f"✅✅✅ Found {len(df)} participants registered to this race. ✅✅✅")
+        print(f"Found {len(df)} participants registered to this race.")
 
         return df
 
@@ -495,7 +495,7 @@ class best_race_results_per_participant:
         df_best = pd.DataFrame(best_results)
         df_best.reset_index(drop=True, inplace=True)
 
-        # ✅ תוצאה מיטבית sorting step
+        # תוצאה מיטבית sorting step
         df_best["race_time"] = pd.to_timedelta(df_best["תוצאה מיטבית"], errors="coerce")
         df_best = df_best.sort_values(by="race_time", ascending=True)
 
@@ -516,7 +516,7 @@ class best_race_results_per_participant:
             output_file = f"excel/{timestamp}_{self.race_name}_best_results_{category}{age_suffix}.xlsx"
             with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
                 df_best.to_excel(writer, index=False)
-            print(f"✅ Saved best results for category '{category}' to {output_file}")
+            print(f"Saved best results for category '{category}' to {output_file}")
 
         return df_best
 
