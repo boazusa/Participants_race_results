@@ -355,6 +355,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             const genderField = document.querySelector('select[name="gender"]');
             const keywordField = document.querySelector('select[name="race_keyword"]');
             const categoryField = document.querySelector('select[name="category"]');
+            const yearsBackField = document.querySelector('input[name="years_back"]');
 
             if (urlField) urlField.value = editData.event_url || '';
             if (nameField) nameField.value = editData.race_name || '';
@@ -370,6 +371,9 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             }
             if (categoryField && editData.category) {
                 categoryField.value = editData.category;
+            }
+            if (yearsBackField && editData.years_back) {
+                yearsBackField.value = editData.years_back;
             }
 
             // Highlight form to show edit mode
@@ -461,11 +465,13 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                 <div class="grid-2">
                     <input type="number" name="min_age"
                            class="modern-input"
-                           placeholder="Min Age" value="40">
+                           placeholder="Min Age" value="40"
+                           title="Minimum age of participants to include">
 
                     <input type="number" name="max_age"
                            class="modern-input"
-                           placeholder="Max Age" value="49">
+                           placeholder="Max Age" value="49"
+                           title="Maximum age of participants to include">
                 </div>
 
                 <div class="grid-2">
@@ -482,11 +488,18 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                     </select>
                 </div>
 
-                <select name="category" class="modern-input">
-                    <option value="5K">Best 5K</option>
-                    <option value="10K" selected>Best 10K</option>
-                    <option value="21K">Best 21K</option>
-                </select>
+                <div class="grid-2">
+                    <select name="category" class="modern-input">
+                        <option value="5K">Best 5K</option>
+                        <option value="10K" selected>Best 10K</option>
+                        <option value="21K">Best 21K</option>
+                    </select>
+
+                    <input type="number" name="years_back"
+                           class="modern-input"
+                           placeholder="Years Back" value="{{ request.args.get('years_back', '5') }}"
+                           title="Filter results from past N years (e.g., 5 for last 5 years)">
+                </div>
             </div>
 
             <!-- BUTTON -->

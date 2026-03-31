@@ -26,7 +26,7 @@ from unittest.mock import patch, Mock
 # Add project root to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from best_results_3plus_or_realtiming_race import best_race_results_per_participant
+from src.core.race_analyzer import best_race_results_per_participant
 
 
 class TestSimpleIntegration:
@@ -36,7 +36,7 @@ class TestSimpleIntegration:
     def test_class_import_and_instantiation(self):
         """Test that the main class can be imported and instantiated."""
         # Test import
-        from best_results_3plus_or_realtiming_race import (
+        from src.core.race_analyzer import (
             best_race_results_per_participant,
         )
 

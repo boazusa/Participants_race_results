@@ -33,7 +33,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 # Import the module to be tested
 import best_results_3plus_or_realtiming_race as br
-from best_results_3plus_or_realtiming_race import best_race_results_per_participant
+from src.core.race_analyzer import best_race_results_per_participant
 
 
 class TestNormalizeDistance(unittest.TestCase):

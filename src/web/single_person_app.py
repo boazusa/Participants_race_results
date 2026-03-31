@@ -25,7 +25,7 @@ License: [boazusa@hotmail.com]
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import os
-from Single_person_results_w_top_results import fetch_and_process_results
+from src.core.single_person_analyzer import fetch_and_process_results
 
 app = Flask(__name__, static_folder="static")
 

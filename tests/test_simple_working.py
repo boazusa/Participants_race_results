@@ -28,7 +28,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 try:
-    from best_results_3plus_or_realtiming_race import best_race_results_per_participant
+    from src.core.race_analyzer import best_race_results_per_participant
 except ImportError as e:
     print(f"Warning: Could not import best_race_results_per_participant: {e}")
     print(f"Available files in project root: {list(Path('.').glob('*.py'))}")

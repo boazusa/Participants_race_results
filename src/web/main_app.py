@@ -30,13 +30,13 @@ import os
 from datetime import datetime
 import json
 import uuid
-from best_results_3plus_or_realtiming_race import (
+from src.core.race_analyzer import (
     best_race_results_per_participant,
 )  # <-- your class file
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
-HISTORY_FILE = "run_history.json"
+HISTORY_FILE = "data/run_history.json"
 
 
 def save_history(entry):
@@ -105,7 +105,7 @@ def index():
     if request.method == "POST":
 
         # Ensure output directory exists
-        os.makedirs("excel", exist_ok=True)
+        os.makedirs("data/excel", exist_ok=True)
 
         # ======= Read form fields =======
         event_url = request.form.get("event_url")
@@ -118,13 +118,16 @@ def index():
         race_keyword = request.form.get("race_keyword")
         category = request.form.get("category")
 
+        # Get years_back from URL parameter or form, default to 5
+        years_back = int(request.args.get("years_back", request.form.get("years_back", 5)))
+
         # ======= Run your class =======
         # excel_path = f"excel/{datetime.now().strftime('%Y%m%d_%H%M%S')}_participants.xlsx"
         runner = best_race_results_per_participant(
             url=event_url,
             race_name=race_name,
             excel_path=True,
-            years_back=5,  # Filter to past 5 years only (2021-2026)
+            years_back=years_back,  # Filter to past N years only
         )
 
         # scrape participants
@@ -150,7 +153,7 @@ def index():
         excel_files = sorted(
             [
                 f
-                for f in os.listdir("excel")
+                for f in os.listdir("data/excel")
                 if f.endswith(".xlsx") and race_name in f and not f.startswith("~$")
             ],
             reverse=True,
@@ -164,7 +167,7 @@ def index():
                 history=load_history(),
             )
 
-        output_file = "excel/" + excel_files[0]
+        output_file = "data/excel/" + excel_files[0]
 
         history_entry = {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -176,6 +179,7 @@ def index():
             "gender": gender,
             "race_keyword": race_keyword,
             "category": category,
+            "years_back": years_back,
             "file": output_file,
         }
 
@@ -252,7 +256,8 @@ def index():
                     'max_age': run.get('max_age', ''),
                     'gender': run.get('gender', ''),
                     'race_keyword': run.get('race_keyword', ''),
-                    'category': run.get('category', '')
+                    'category': run.get('category', ''),
+                    'years_back': run.get('years_back', '')
                 }
                 break
     else:

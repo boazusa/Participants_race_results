@@ -39,13 +39,13 @@ sys.path.insert(0, str(project_root))
 
 # Import project modules with error handling
 try:
-    from best_results_3plus_or_realtiming_race import best_race_results_per_participant
+    from src.core.race_analyzer import best_race_results_per_participant
 except ImportError as e:
     print(f"Warning: Could not import best_race_results_per_participant: {e}")
     best_race_results_per_participant = None
 
 try:
-    from excel_analysis import BestResultsFromExcel
+    from src.core.excel_processor import BestResultsFromExcel
 except ImportError as e:
     print(f"Warning: Could not import BestResultsFromExcel: {e}")
     BestResultsFromExcel = None
