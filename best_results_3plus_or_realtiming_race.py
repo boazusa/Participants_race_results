@@ -54,7 +54,7 @@ class best_race_results_per_participant:
         self.years_back = years_back
 
         # Create excel directory if it doesn't exist
-        excel_dir = "data/excel"
+        excel_dir = "excel"
         if not os.path.exists(excel_dir):
             os.makedirs(excel_dir, exist_ok=True)
 
@@ -570,7 +570,7 @@ class best_race_results_per_participant:
                 oldest_age = current_year - min_year  # lower birth year -> older
                 age_suffix = f"_{youngest_age}-{oldest_age}"
 
-            output_file = f"data/excel/{timestamp}_{self.race_name}_best_results_{category}{age_suffix}.xlsx"
+            output_file = f"excel/{timestamp}_{self.race_name}_best_results_{category}{age_suffix}.xlsx"
             with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
                 df_best.to_excel(writer, index=False)
             print(f"Saved best results for category '{category}' to {output_file}")

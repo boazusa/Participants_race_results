@@ -122,10 +122,10 @@ def fetch_and_process_results(first_name, last_name):
     best_rows = best_rows.sort_values("order_key").drop(columns="order_key")
 
     # === STEP 3: Export to Excel ===
-    excel_dir = "data/excel"
+    excel_dir = "excel"
     if not os.path.exists(excel_dir):
         os.makedirs(excel_dir, exist_ok=True)
-    output_file = f"data/excel/{first_name}_{last_name}_תוצאות_ריצה.xlsx"
+    output_file = f"excel/{first_name}_{last_name}_תוצאות_ריצה.xlsx"
     with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
         # Write best results (with headers)
         best_rows.to_excel(writer, index=False, sheet_name="Sheet1", startrow=0)

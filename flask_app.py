@@ -30,13 +30,13 @@ import os
 from datetime import datetime
 import json
 import uuid
-from src.core.race_analyzer import (
+from best_results_3plus_or_realtiming_race import (
     best_race_results_per_participant,
 )  # <-- your class file
 
-app = Flask(__name__, template_folder='templates', static_folder='static')
+app = Flask(__name__)
 
-HISTORY_FILE = "data/run_history.json"
+HISTORY_FILE = "run_history.json"
 
 
 def save_history(entry):
@@ -105,7 +105,7 @@ def index():
     if request.method == "POST":
 
         # Ensure output directory exists
-        os.makedirs("data/excel", exist_ok=True)
+        os.makedirs("excel", exist_ok=True)
 
         # ======= Read form fields =======
         event_url = request.form.get("event_url")
@@ -153,7 +153,7 @@ def index():
         excel_files = sorted(
             [
                 f
-                for f in os.listdir("data/excel")
+                for f in os.listdir("excel")
                 if f.endswith(".xlsx") and race_name in f and not f.startswith("~$")
             ],
             reverse=True,
@@ -167,7 +167,7 @@ def index():
                 history=load_history(),
             )
 
-        output_file = "data/excel/" + excel_files[0]
+        output_file = "excel/" + excel_files[0]
 
         history_entry = {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
