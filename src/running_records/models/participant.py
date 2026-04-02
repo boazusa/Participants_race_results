@@ -14,8 +14,8 @@ License: [boazusa@hotmail.com]
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Any
-from datetime import datetime
+from typing import Dict, Any, List, Optional
+from datetime import datetime, date
 
 from ..exceptions import DataValidationError
 from ..utils.validation import validate_participant_data

@@ -14,9 +14,14 @@ License: [boazusa@hotmail.com]
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Optional, Dict, Any
+from typing import List, Dict, Any, Optional, Union, Tuple
+from urllib.parse import urljoin, urlparse
+import time
+import logging
+import requests
+from bs4 import BeautifulSoup
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from ..config import config
 from ..exceptions import (
