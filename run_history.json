@@ -1,20 +1,20 @@
 [
     {
-        "timestamp": "2026-03-29 02:15:06",
-        "event_url": "view-source:https://regi.3plus.co.il/events/page/17492",
-        "race_name": "נס ציונה",
+        "timestamp": "2026-04-03 02:46:54",
+        "event_url": "view-source:https://ashkelon.runisrael.org.il/iaa/category/18269",
+        "race_name": "אשקלון",
         "min_age": 40,
-        "max_age": 49,
-        "age_range": "40-49",
+        "max_age": 44,
+        "age_range": "40-44",
         "gender": "male",
-        "race_keyword": "10",
+        "race_keyword": "15",
         "category": "10K",
         "years_back": 5,
-        "file": "excel/2026_03_29_02_15_05_נס ציונה_best_results_10K_40-49.xlsx",
-        "id": "46210271-acc1-4c86-84a9-009655354199"
+        "file": "excel/2026_04_03_02_46_54_אשקלון_best_results_10K_40-44.xlsx",
+        "id": "930b71d8-0137-4a8b-8d0e-b0bf2466e4e5"
     },
     {
-        "timestamp": "2026-03-29 01:06:53",
+        "timestamp": "2026-04-03 02:45:17",
         "event_url": "view-source:https://regi.3plus.co.il/events/page/17492",
         "race_name": "נס ציונה",
         "min_age": 40,
@@ -23,9 +23,51 @@
         "gender": "male",
         "race_keyword": "10",
         "category": "10K",
+        "years_back": 3,
+        "file": "excel/2026_04_03_02_45_17_נס ציונה_best_results_10K_40-49.xlsx",
+        "id": "5bde38a3-a2db-468d-8552-4986a9f49c8d"
+    },
+    {
+        "timestamp": "2026-04-03 02:43:51",
+        "event_url": "view-source:https://regi.3plus.co.il/events/page/17492",
+        "race_name": "נס ציונה",
+        "min_age": 40,
+        "max_age": 49,
+        "age_range": "40-49",
+        "gender": "male",
+        "race_keyword": "5",
+        "category": "10K",
         "years_back": 5,
-        "file": "excel/2026_03_29_01_06_53_נס ציונה_best_results_10K_40-49.xlsx",
-        "id": "2afa61b3-13e5-4c1b-ab6b-44565611f62f"
+        "file": "excel/2026_04_03_02_43_51_נס ציונה_best_results_10K_40-49.xlsx",
+        "id": "f676f119-e74c-4e8a-84b7-d9d81e19a79e"
+    },
+    {
+        "timestamp": "2026-04-03 02:43:24",
+        "event_url": "view-source:https://www.matnasmodiin.org.il/html5/UAPI.TAF?get=218&nocache=1",
+        "race_name": "מודיעין",
+        "min_age": 40,
+        "max_age": 49,
+        "age_range": "40-49",
+        "gender": "male",
+        "race_keyword": "10",
+        "category": "10K",
+        "years_back": 5,
+        "file": "excel/2026_04_03_02_43_24_מודיעין_best_results_10K_40-49.xlsx",
+        "id": "78976768-0c2e-4e39-bd02-fbfec2acc7fc"
+    },
+    {
+        "timestamp": "2026-03-31 23:51:39",
+        "event_url": "view-source:https://www.matnasmodiin.org.il/html5/UAPI.TAF?get=218&nocache=1",
+        "race_name": "מודיעין",
+        "min_age": 40,
+        "max_age": 49,
+        "age_range": "40-49",
+        "gender": "male",
+        "race_keyword": "10",
+        "category": "10K",
+        "years_back": 5,
+        "file": "excel/2026_03_31_23_51_37_מודיעין_best_results_10K_40-49.xlsx",
+        "id": "698e7cf6-df12-4faf-a2c2-0a70f3e69677"
     },
     {
         "timestamp": "2026-03-29 01:05:51",

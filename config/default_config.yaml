@@ -1,0 +1,96 @@
+# Default configuration for Running Records Analysis
+# This file contains default settings that can be overridden by environment variables
+
+# Scraping configuration
+scraping:
+  # Request settings
+  timeout: 30
+  max_retries: 3
+  retry_delay: 1
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  
+  # Rate limiting
+  rate_limit_delay: 0.5
+  concurrent_requests: 1
+  
+  # Content settings
+  encoding: "utf-8"
+  verify_ssl: true
+
+# Database configuration (for future use)
+database:
+  type: "sqlite"
+  path: "data/running_records.db"
+  echo: false
+  pool_size: 5
+
+# Excel export configuration
+excel:
+  # Output settings
+  output_dir: "excel"
+  auto_adjust_width: true
+  include_metadata: true
+  
+  # Formatting
+  date_format: "DD/MM/YYYY"
+  time_format: "HH:MM:SS"
+  number_format: "#,##0.00"
+  
+  # Metadata
+  include_timestamp: true
+  include_filters: true
+  include_statistics: true
+
+# Web application configuration
+web:
+  # Flask settings
+  host: "127.0.0.1"
+  port: 5000
+  debug: false
+  secret_key: "your-secret-key-here"
+  
+  # Session settings
+  session_timeout: 3600
+  permanent_session_lifetime: 86400
+  
+  # File upload settings
+  max_content_length: 16777216  # 16MB
+  upload_folder: "uploads"
+  
+  # History settings
+  history_file: "run_history.json"
+  max_history_entries: 100
+
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/running_records.log"
+  max_file_size: 10485760  # 10MB
+  backup_count: 5
+
+# Data processing configuration
+processing:
+  # Filtering defaults
+  default_years_back: 5
+  default_min_age: null
+  default_max_age: null
+  default_gender: null
+  
+  # Normalization settings
+  normalize_names: true
+  normalize_times: true
+  validate_data: true
+  
+  # Performance settings
+  chunk_size: 1000
+  parallel_processing: false
+  max_workers: 4
+
+# Cache configuration
+cache:
+  enabled: true
+  type: "memory"  # memory or file
+  ttl: 3600  # seconds
+  max_size: 1000
+  file_dir: "cache"
