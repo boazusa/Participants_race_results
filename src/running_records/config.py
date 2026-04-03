@@ -158,6 +158,11 @@ class Config:
                 setattr(obj, key, value)
     
     @classmethod
+    def get_version(cls) -> str:
+        """Get the package version."""
+        return "2.0.0"
+    
+    @classmethod
     def from_env(cls, environment: Optional[str] = None) -> "Config":
         """Create configuration from environment."""
         if environment is None:
