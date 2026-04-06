@@ -26,10 +26,10 @@ from bs4 import BeautifulSoup
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Import project modules
-from best_results_3plus_or_realtiming_race import best_race_results_per_participant
-from Single_person_results_w_top_results import fetch_and_process_results
-from flask_app import app as flask_app  # Assuming app is the Flask instance
-from single_person_flask_app import app as single_app
+from backend.race_analyzer import best_race_results_per_participant
+from backend.person_results import fetch_and_process_results
+from main_web_app import app as flask_app  # Assuming app is the Flask instance
+from person_search_web_app import app as single_app
 
 
 class TestBestRaceResultsPerParticipant:

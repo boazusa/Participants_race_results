@@ -19,8 +19,12 @@ The UI includes:
 
 ## Project structure
 
-- `flask_app.py`  – Flask web server and routes (`/` for the GUI, `/download` for Excel files).
-- `best_results_3plus_or_realtiming_race.py` – Core scraping, filtering and best-result computation logic.
+- `main_web_app.py`  – Main Flask web server and routes (`/` for the GUI, `/download` for Excel files).
+- `person_search_web_app.py`  – Person search Flask web server for individual race results.
+- `backend/` – Backend logic package:
+  - `race_analyzer.py` – Core scraping, filtering and best-result computation logic.
+  - `excel_processor.py` – Excel file processing and analysis.
+  - `person_results.py` – Individual race results fetching and processing.
 - `templates/index.html` – Web UI template (Bootstrap-based) used by Flask.
 - `tests/` – Complete testing framework with 192 passing tests.
 - `requirements.txt` – Python dependencies.
@@ -28,14 +32,14 @@ The UI includes:
 
 ## Testing
 
-The project includes a comprehensive testing framework with **171 passing tests** located in the `tests/` folder:
+The project includes a comprehensive testing framework with **192 passing tests** located in `tests/` folder:
 
 ```bash
 # Run all tests
 pytest
 
 # Run tests with coverage
-pytest --cov=best_results_3plus_or_realtiming_race
+pytest --cov=backend.race_analyzer --cov=backend.excel_processor --cov=backend.person_results --cov=main_web_app --cov=person_search_web_app
 
 # Run specific test file
 pytest tests/test_race_analysis.py -v
@@ -83,7 +87,7 @@ pip install -r requirements.txt
 From the project root:
 
 ```bash
-python flask_app.py
+python main_web_app.py
 ```
 
 By default the app runs in debug mode on `http://127.0.0.1:5000/`.
@@ -131,7 +135,7 @@ From the project root:
 
 For basic helper tests (unittest):
 ```bash
-python -m unittest test_best_results_helpers.py
+python -m unittest tests/test_best_results_helpers.py
 ```
 
 For comprehensive tests (pytest):

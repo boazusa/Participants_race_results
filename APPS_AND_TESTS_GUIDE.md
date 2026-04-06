@@ -2,11 +2,11 @@
 
 ## 📱 **Web Applications**
 
-### **1. Main Flask App** (`flask_app.py`)
+### **1. Main Flask App** (`main_web_app.py`)
 **Purpose:** Full-featured web interface for race analysis
 ```bash
 # Run the main Flask application
-python flask_app.py
+python main_web_app.py
 
 # Access in browser
 http://localhost:5000
@@ -21,11 +21,11 @@ http://localhost:5000
 
 ---
 
-### **2. Single Person Flask App** (`single_person_flask_app.py`)
+### **2. Single Person Flask App** (`person_search_web_app.py`)
 **Purpose:** Search for individual runner results
 ```bash
 # Run single person search app
-python single_person_flask_app.py
+python person_search_web_app.py
 
 # Access in browser
 http://localhost:5001
@@ -54,7 +54,7 @@ cd tests && pytest
 pytest tests/ -v
 
 # With coverage
-pytest tests/ --cov=best_results_3plus_or_realtiming_race
+pytest tests/ --cov=backend.race_analyzer --cov=backend.excel_processor --cov=backend.person_results --cov=main_web_app --cov=person_search_web_app
 ```
 
 #### **Run Specific Test Files**
@@ -154,7 +154,7 @@ pytest tests/test_race_analysis.py::TestNormalizeDistance -v
 ### **3. Full Validation**
 ```bash
 # Run complete test suite before commit
-pytest tests/ --cov=best_results_3plus_or_realtiming_race
+pytest tests/ --cov=backend.race_analyzer --cov=backend.excel_processor --cov=backend.person_results --cov=main_web_app --cov=person_search_web_app
 ```
 
 ### **4. Performance Testing**
@@ -223,7 +223,7 @@ export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 ```bash
 # If port 5000 is busy, Flask will automatically try next port
 # Or specify different port:
-python -c "from flask_app import app; app.run(port=5001)"
+python -c "from main_web_app import app; app.run(port=5001)"
 ```
 
 ### **Test Failures:**
@@ -243,16 +243,16 @@ pytest tests/test_race_analysis.py::TestNormalizeDistance -v -s
 ```bash
 # Using gunicorn (recommended)
 pip install gunicorn
-gunicorn -w 4 -b 0.0.0.0:5000 flask_app:app
+gunicorn -w 4 -b 0.0.0.0:5000 main_web_app:app
 
 # Using built-in Flask (development only)
-python flask_app.py
+python main_web_app.py
 ```
 
 ### **Single Person App:**
 ```bash
 # Using gunicorn
-gunicorn -w 2 -b 0.0.0.0:5001 single_person_flask_app:app
+gunicorn -w 2 -b 0.0.0.0:5001 person_search_web_app:app
 ```
 
 ---
@@ -261,8 +261,8 @@ gunicorn -w 2 -b 0.0.0.0:5001 single_person_flask_app:app
 
 | Action | Command |
 |--------|---------|
-| **Start Main App** | `python flask_app.py` |
-| **Start Single App** | `python single_person_flask_app.py` |
+| **Start Main App** | `python main_web_app.py` |
+| **Start Single App** | `python person_search_web_app.py` |
 | **Run All Tests** | `pytest tests/ -v` |
 | **Run Quick Tests** | `tests\run_tests.bat` |
 | **Install Dependencies** | `pip install -r requirements.txt` |

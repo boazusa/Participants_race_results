@@ -66,7 +66,7 @@ python -m pytest --tb=short --color=yes --durations=10
 ```
 
 **Expected Results:**
-- **171 tests passing** ✅
+- **192 tests passing** ✅
 - **0 tests failed** ✅
 - **Full coverage reporting** 📊
 
@@ -121,7 +121,7 @@ You can still run tests locally:
 pytest tests/
 
 # Run with coverage
-pytest tests/ --cov=best_results_3plus_or_realtiming_race
+pytest tests/ --cov=backend.race_analyzer --cov=backend.excel_processor --cov=backend.person_results --cov=main_web_app --cov=person_search_web_app
 
 # Professional output
 tests\run_tests_professional.bat

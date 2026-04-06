@@ -7,7 +7,7 @@ import pytest
 import pandas as pd
 from unittest.mock import Mock, patch
 from tests.fixtures.sample_data import SampleDataGenerator, TestScenarios
-from best_results_3plus_or_realtiming_race import best_race_results_per_participant
+from backend.race_analyzer import best_race_results_per_participant
 
 
 class TestWebScrapingScenarios:

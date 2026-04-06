@@ -29,7 +29,7 @@ import os
 # Add the parent directory to the path to allow importing the module under test
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from best_results_3plus_or_realtiming_race import best_race_results_per_participant
+from backend.race_analyzer import best_race_results_per_participant
 
 
 class Test3PlusEventScenario:
@@ -105,7 +105,7 @@ class Test3PlusEventScenario:
         assert calculated_min_age == scenario_params["min_age"]
         assert calculated_max_age == scenario_params["max_age"]
 
-    @patch("best_results_3plus_or_realtiming_race.requests.get")
+    @patch("backend.race_analyzer.requests.get")
     def test_3plus_url_detection(self, mock_get, race_analyzer):
         """Test that 3plus URLs are correctly identified."""
         mock_response = Mock()
@@ -280,7 +280,7 @@ class Test3PlusEventScenario:
 class Test3PlusEventIntegration:
     """Integration tests for the complete 3plus event workflow."""
 
-    @patch("best_results_3plus_or_realtiming_race.requests.get")
+    @patch("backend.race_analyzer.requests.get")
     def test_full_workflow_simulation(self, mock_get):
         """Test the full workflow with mocked HTTP requests."""
         # Mock the participants table response
