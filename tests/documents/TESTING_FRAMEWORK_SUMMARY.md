@@ -92,7 +92,7 @@ tests/
 #### Context Managers
 - **TempExcelFile**: Automatic temporary Excel file management
 - **MockHTTPServer**: HTTP request mocking context
-- **TestDataManager**: Comprehensive test data lifecycle management
+- **ResourceManager**: Comprehensive test data lifecycle management
 
 ### 4. **Mock HTTP Responses**
 - **3plus Website**: Realistic participant table responses

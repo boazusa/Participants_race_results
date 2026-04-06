@@ -299,7 +299,7 @@ The CI/CD pipeline includes:
 1. **Use fixtures** for shared test data
 2. **Generate realistic data** with `SampleDataGenerator`
 3. **Test edge cases** with `EdgeCaseData`
-4. **Clean up resources** using `TestDataManager`
+4. **Clean up resources** using `ResourceManager`
 
 ### Assertions
 

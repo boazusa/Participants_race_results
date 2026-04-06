@@ -345,7 +345,7 @@ class ValidationHelpers:
         return issues
 
 
-class TestDataManager:
+class ResourceManager:
     """Manages test data setup and cleanup."""
 
     def __init__(self, temp_dir=None):
