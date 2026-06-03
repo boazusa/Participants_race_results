@@ -30,7 +30,8 @@ import os
 from datetime import datetime
 import json
 import uuid
-from backend.race_analyzer import (
+# from backend.race_analyzer_new import (       # New method via raceview
+from backend.race_analyzer_new import (
     best_race_results_per_participant,
 )  # <-- your class file
 
@@ -38,6 +39,49 @@ app = Flask(__name__)
 
 HISTORY_FILE = "run_history.json"
 
+def format_seconds(value):
+    if pd.isna(value) or value == "":
+        return ""
+
+    # אם כבר בפורמט זמן
+    if isinstance(value, str) and ":" in value:
+        return value
+
+    try:
+        seconds = float(value)
+    except:
+        return ""
+
+    h = int(seconds // 3600)
+    m = int((seconds % 3600) // 60)
+    s = int(seconds % 60)
+
+    if h > 0:
+        return f"{h:02d}:{m:02d}:{s:02d}"
+    return f"{m:02d}:{s:02d}"
+
+def to_seconds(value):
+    if pd.isna(value):
+        return None
+
+    value = str(value).strip()
+
+    # case 01:05:54
+    if ":" in value:
+        parts = value.split(":")
+        parts = [int(p) for p in parts]
+        if len(parts) == 3:
+            h, m, s = parts
+            return h * 3600 + m * 60 + s
+        if len(parts) == 2:
+            m, s = parts
+            return m * 60 + s
+
+    # case 2116.66
+    try:
+        return float(value)
+    except:
+        return None
 
 def save_history(entry):
 
@@ -195,35 +239,89 @@ def index():
 
         # Load result to show top 10
         df = pd.read_excel(output_file)
-        columns_to_show = [
-            "שם מרוץ",
-            "שם פרטי",
-            "שם משפחה",
-            "תאריך אירוע",
-            "תוצאה מיטבית",
-            "קטגוריה",
-        ]
+        # columns_to_show = [
+        #     "שם מרוץ",
+        #     "שם פרטי",
+        #     "שם משפחה",
+        #     "תאריך אירוע",
+        #     "תוצאה מיטבית",
+        #     "קטגוריה",
+        # ]
+
+        columns_to_show = {
+            "שם פרטי": "first_name",
+            "שם משפחה": "last_name",
+            "שם מרוץ": "event_name",
+            "תאריך": "date",
+            "קטגוריה": "category",  # TODO: remove?
+            "מקצה": "race_name",
+            # "מרחק": "distance",
+            "תוצאה": "result",
+            # "זמן אישי": "personal_time",
+            "קצב לק״מ": "pace_k"
+        }
 
         # ===== RESULTS STATS =====
 
         total_runners = len(df)
-        df["race_time"] = pd.to_timedelta(df["תוצאה מיטבית"], errors="coerce")
+        df = df.sort_values("result", ascending=True)
+        df["race_time"] = pd.to_timedelta(df["result"], errors="coerce")
 
-        fastest_time = df["race_time"].min()
-        avg_time = df["race_time"].mean()
+        fastest_time = df["result"].min()
+        avg_time = df["result"].mean()
 
-        # Convert to clean strings
-        fastest_time = clean_timedelta(fastest_time)
-        avg_time = clean_timedelta(avg_time)
+        print("* Fastest time:", fastest_time)
+        print("* Average time:", avg_time)
+
+        print("* Fastest time:", format_seconds(fastest_time))
+        print("* Average time:", format_seconds(avg_time))
 
         # Optional – time of place 10
         top3_cutoff = "N/A"
         if len(df) >= 3:
-            cutoff = df["race_time"].iloc[2]
+            cutoff = df["result"].iloc[2]
             if pd.notna(cutoff):
-                top3_cutoff = clean_timedelta(cutoff)
+                top3_cutoff = format_seconds(cutoff)
+        
+        df["result"] = df["result"].apply(format_seconds)
 
-        df_best = df[columns_to_show]
+        # fastest_time = df["race_time"].min()
+        # avg_time = df["race_time"].mean()
+        
+        # print("Fastest time:", fastest_time)
+        # print("Average time:", avg_time)
+
+        # print("Fastest time:", format_seconds(fastest_time))
+        # print("Average time:", format_seconds(avg_time))
+
+        # # Convert to clean strings
+        # fastest_time = clean_timedelta(fastest_time)
+        # avg_time = clean_timedelta(avg_time)
+
+        fastest_time = format_seconds(fastest_time)
+        avg_time = format_seconds(avg_time)
+
+        print("Fastest time:", fastest_time)
+        print("Average time:", avg_time)
+
+        df_best = df[list(columns_to_show.values())]
+        df_best.columns = list(columns_to_show.keys())
+
+        print(df_best)
+
+        df_best.rename(columns={
+            "event_name": "שם מרוץ",
+            "date": "תאריך אירוע",
+            "category": "קטגוריה",
+            "race_name": "מקצה",
+            "distance": "מרחק",
+            "תוצאה מיטבית": "תוצאה מיטבית",
+            "personal_time": "זמן אישי",
+            "pace_k": "קצב לק״מ",
+            "first_name": "שם פרטי",
+            "last_name": "שם משפחה"
+        }, inplace=True)
+        
         top10 = df_best.head(10).to_html(classes="table table-striped", index=False)
 
         history = load_history()

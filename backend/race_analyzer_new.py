@@ -25,6 +25,7 @@ License: [boazusa@hotmail.com]
 """
 
 import os
+import configparser
 import sys
 from datetime import datetime
 from pandas.io.sql import partial
@@ -34,6 +35,24 @@ import pandas as pd
 import numpy as np
 from urllib.parse import quote
 from requests.exceptions import RequestException, Timeout
+# from raceview_api import RaceViewAPI
+from backend.raceview_api import RaceViewAPI, RaceViewEngine
+
+# BASE_DIR = os.path.dirname(__file__)  # backend/
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+
+CONFIG_PATH = os.path.join(PROJECT_ROOT, "login_info", "login.ini")
+
+config = configparser.ConfigParser()
+files = config.read(CONFIG_PATH, encoding="utf-8")
+
+if not files:
+    raise FileNotFoundError(f"Could not read config: {CONFIG_PATH}")
+
+EMAIL = config["login"]["email"]
+PASSWORD = config["login"]["password"]
+API_KEY = config["login"]["api_key"]
 
 # Configure UTF-8 encoding for Windows console
 if sys.platform == "win32":
@@ -68,6 +87,28 @@ def safe_print(*args, **kwargs):
         print(*safe_args, **kwargs)
 
 
+def format_seconds(value):
+    if pd.isna(value) or value == "":
+        return ""
+
+    # אם כבר בפורמט זמן
+    if isinstance(value, str) and ":" in value:
+        return value
+
+    try:
+        seconds = float(value)
+    except:
+        return ""
+
+    h = int(seconds // 3600)
+    m = int((seconds % 3600) // 60)
+    s = int(seconds % 60)
+
+    if h > 0:
+        return f"{h:02d}:{m:02d}:{s:02d}"
+    return f"{m:02d}:{s:02d}"
+
+
 class best_race_results_per_participant:
     def __init__(self, url, race_name=None, excel_path=None, years_back=5):
         """
@@ -90,6 +131,17 @@ class best_race_results_per_participant:
         excel_dir = "excel"
         if not os.path.exists(excel_dir):
             os.makedirs(excel_dir, exist_ok=True)
+
+        api = RaceViewAPI(
+            email=EMAIL,
+            password=PASSWORD,
+            api_key=API_KEY
+        )
+
+        # Login פעם אחת בלבד
+        api.login()
+
+        self.engine = RaceViewEngine(api)
 
     @staticmethod
     def normalize_year(y):
@@ -446,130 +498,161 @@ class best_race_results_per_participant:
                 return val
         return ""
 
-    def fetch_best_result(self, first_name, last_name, category, timeout_seconds=10, years_back=5):
-        query = quote(f"{first_name} {last_name}")
-        url = f"https://raceresults.shvoong.co.il/race-result/?q={query}"
+    
+    def fetch_best_result(self, first_name, last_name, category, years_back=5):
 
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/141.0.0.0 Safari/537.36"
-        }
+        full_name = f"{first_name} {last_name}"
 
-        try:
-            response = requests.get(url, headers=headers, timeout=timeout_seconds)
-            response.raise_for_status()
-        except Timeout:
-            print(f"⏰ Timeout for {first_name} {last_name} after {timeout_seconds}s")
-            return None
-        except RequestException as e:
-            print(f"❌ Request failed for {first_name} {last_name}: {e}")
+        results = self.engine.get_runner_results(full_name)
+        if not results:
             return None
 
-        soup = BeautifulSoup(response.text, "html.parser")
-        table = soup.find("table")
-        print(response.text[:3000])
-        if not table:
-            print(f"❌ No table found for {first_name} {last_name}")
+        # df = pd.DataFrame(results)
+        df = pd.json_normalize(results)
+
+        df = self.engine.filter_by_years(df, years_back)
+        df = self.engine.filter_by_distance(df, category)
+
+        best = self.engine.pick_best_result(df)
+        if best is None:
             return None
 
-        thead = table.find("thead")
-        headers = [th.get_text(strip=True) for th in thead.find_all("th")]
-        tbody = table.find("tbody")
+        best["שם פרטי"] = first_name
+        best["שם משפחה"] = last_name
+        # best["תוצאה מיטבית"] = str(pd.to_timedelta(best["best_time"], unit="s"))
+        best["תוצאה מיטבית"] = format_seconds(best["best_time"])
+        print(f"==================== Best result for {first_name} {last_name}: {best['תוצאה מיטבית']}")
+        best["הערה"] = "Best Result"
 
-        rows = []
-        for tr in tbody.find_all("tr"):
-            cells = [td.get_text(strip=True) for td in tr.find_all("td")]
-            if cells:
-                rows.append(cells)
+        return best
+    
+    # def fetch_best_result(
+    #         self,
+    #         first_name,
+    #         last_name,
+    #         category,
+    #         timeout_seconds=10,
+    #         years_back=5
+    # ):
+    #     try:
+    #         full_name = f"{first_name} {last_name}"
 
-        if not rows:
-            print(f"❌ No results for {first_name} {last_name}")
-            return None
+    #         # if full_name in self.runner_cache:
+    #         #     results_json = self.runner_cache[full_name]
+    #         # else:
+    #         #     results_json = self.raceview_api.search_runner(full_name)
+    #         #     self.runner_cache[full_name] = results_json
 
-        max_cols = max(len(r) for r in rows)
-        headers = headers[:max_cols]
-        rows = [r + [""] * (max_cols - len(r)) for r in rows]
+    #         results_json = self.raceview_api.search_runner(full_name)
 
-        df = pd.DataFrame(rows, columns=headers)
-        
-        # Debug: Show available columns
-        # print(f"🔍 Available columns for {first_name} {last_name}: {list(df.columns)}")
-        safe_print(f"🔍 Available results for {first_name} {last_name}")
+    #         if not results_json:
+    #             return None
 
-        # Normalize category and pick best time string
-        df["normalized_distance"] = df["מקצה"].apply(self.normalize_distance)
-        df["תוצאה מיטבית"] = df.apply(self.choose_best_time_string, axis=1)
+    #         results = results_json.get("data", {}).get("results", [])
 
-        # Convert to timedelta for sorting
-        df["race_time"] = pd.to_timedelta(df["תוצאה מיטבית"], errors="coerce")
+    #         if not results:
+    #             safe_print(f"⚠️ No results for {full_name}")
+    #             return None
 
-        # Filter by date - only include results from past N years
-        current_year = datetime.now().year
-        years_ago = current_year - years_back
-        
-        # Try to find a date column and filter by year
-        date_columns = [
-            "תאריך", "שנה", "מרוץ", "תאריך מרוץ", "שנה אירוע", "תאריך תחרות", "מרוץ תאריך",
-            "תחרות", "אירוע", "תאריך אירוע", "שנת תחרות", "תאריך התחרות",
-            "Date", "Year", "Race Date", "Event Date", "Competition Date"
-        ]
-        date_col = None
-        for col in date_columns:
-            if col in df.columns:
-                date_col = col
-                break
-        
-        if date_col:
-            # Extract year from date column and filter
-            df[date_col] = df[date_col].astype(str)
-            
-            # Try multiple patterns to extract year
-            # Pattern 1: Direct 4-digit year
-            df["race_year"] = df[date_col].str.extract(r'(\d{4})')
-            
-            # Pattern 2: If no 4-digit year, try to extract from date formats like dd/mm/yyyy
-            if df["race_year"].isna().all():
-                df["race_year"] = df[date_col].str.extract(r'(\d{2,4})\s*[-/]\d{1,2}[-/]\d{1,2}$')
-                # Convert 2-digit years to 4-digit (assuming 2000s)
-                df["race_year"] = df["race_year"].apply(
-                    lambda x: int(f"20{x}") if pd.notna(x) and len(str(int(x))) == 2 else x
-                )
-            
-            # Pattern 3: Try to find any 4-digit number in the string
-            if df["race_year"].isna().all():
-                df["race_year"] = df[date_col].str.extract(r'.*?(\d{4}).*?')
-            
-            df["race_year"] = pd.to_numeric(df["race_year"], errors="coerce")
-            
-            # Filter to only include results from past N years
-            valid_years = df[df["race_year"].notna()]
-            if not valid_years.empty:
-                df = df[df["race_year"] >= years_ago]
-                df = df[df["race_year"] <= current_year]
-                # Debug: Filtered to results, results in date range
-                # print(f"📅 Filtered to results from {years_ago}-{current_year} (past {years_back} years)")
-                # print(f"📊 Found { len(df)} results in date range")
-            else:
-                safe_print(f"⚠️ No valid years found in date column '{date_col}'")
-        else:
-            safe_print(f"⚠️ No date column found, including all historical results")
-        # safe_print(f"🔍 Searched for: {date_columns}")
+    #         df = pd.DataFrame(results)
 
-        # Filter by category
-        df_cat = df[df["normalized_distance"] == category]
-        if df_cat.empty:
-            safe_print(f"⚠️ No results for {first_name} {last_name} in category {category}")
-            return None
+    #         if df.empty:
+    #             return None
 
-        # Find best result
-        best_idx = df_cat["race_time"].idxmin()
-        best_row = df_cat.loc[best_idx].copy()
-        best_row["שם פרטי"] = first_name
-        best_row["שם משפחה"] = last_name
-        best_row["הערה"] = "Best Result"
+    #         # ----------------------------
+    #         # Date filter
+    #         # ----------------------------
+    #         current_year = datetime.now().year
+    #         min_year = current_year - years_back
 
-        return best_row
+    #         df["date"] = pd.to_datetime(df["date"], errors="coerce")
+
+    #         df = df[
+    #             (df["date"].dt.year >= min_year) &
+    #             (df["date"].dt.year <= current_year)
+    #         ]
+
+    #         if df.empty:
+    #             safe_print(
+    #                 f"⚠️ No results for {full_name} in last {years_back} years"
+    #             )
+    #             return None
+
+    #         # ----------------------------
+    #         # Distance filter
+    #         # ----------------------------
+    #         distance_map = {
+    #             "5K": 5000,
+    #             "10K": 10000,
+    #             "15K": 15000,
+    #             "21K": 21000,
+    #             "42K": 42195
+    #         }
+
+    #         target_distance = distance_map.get(category)
+
+    #         if target_distance is None:
+    #             safe_print(f"⚠️ Unknown category {category}")
+    #             return None
+
+    #         # ירושלים מחזיר 21000 במקום 21097
+    #         tolerance = 200
+
+    #         df = df[
+    #             (df["distance"] >= target_distance - tolerance) &
+    #             (df["distance"] <= target_distance + tolerance)
+    #         ]
+
+    #         if df.empty:
+    #             safe_print(
+    #                 f"⚠️ No {category} results for {full_name}"
+    #             )
+    #             return None
+
+    #         # ----------------------------
+    #         # Choose best time
+    #         # ----------------------------
+    #         df["best_time"] = (
+    #             pd.to_numeric(df["personal_time"], errors="coerce")
+    #             .fillna(
+    #                 pd.to_numeric(df["result"], errors="coerce")
+    #             )
+    #         )
+
+    #         df = df[df["best_time"].notna()]
+
+    #         if df.empty:
+    #             return None
+
+    #         best_row = df.loc[df["best_time"].idxmin()].copy()
+
+    #         # ----------------------------
+    #         # Match old SHVOONG columns
+    #         # ----------------------------
+    #         best_row["שם פרטי"] = first_name
+    #         best_row["שם משפחה"] = last_name
+
+    #         best_row["תוצאה מיטבית"] = str(
+    #             pd.to_timedelta(best_row["best_time"], unit="s")
+    #         )
+
+    #         best_row["מרוץ"] = best_row.get("event_name")
+    #         best_row["מקצה"] = best_row.get("race_name")
+
+    #         best_row["race_time"] = pd.to_timedelta(
+    #             best_row["best_time"],
+    #             unit="s"
+    #         )
+
+    #         best_row["הערה"] = "Best Result"
+
+    #         return best_row
+
+    #     except Exception as e:
+    #         safe_print(
+    #             f"❌ Error fetching {first_name} {last_name}: {e}"
+    #         )
+    #         return None
 
     def best_results_for_category(self, category):
         best_results = []
