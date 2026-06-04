@@ -1,3 +1,34 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+===============================================================================
+Project: Running Records Analysis
+Module: RaceView API Client
+Description:
+    Wrapper around the RaceView API for:
+    - Authentication
+    - Runner search
+    - Results retrieval
+    - Data processing
+
+Author: Boaz Bilgory
+Email: boazusa@hotmail.com
+Created: 01/06/2026
+
+Special Thanks:
+    Ilan Zisser and the RaceView team for providing API access
+    and supporting the running community.
+
+API Provider:
+    RaceView
+
+Version: 1.0.0
+Python: 3.8+
+
+===============================================================================
+"""
+
 from datetime import datetime
 import pandas as pd
 import json
@@ -61,6 +92,12 @@ class RaceViewEngine:
 
 
 class RaceViewAPI:
+    """
+    RaceView API client.
+
+    API access provided by RaceView.
+    Special thanks to Ilan Zisser from RaceView for assistance and support.
+    """
 
     BASE_URL = "https://il.raceview.net"
 
