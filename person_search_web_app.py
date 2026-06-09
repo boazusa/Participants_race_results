@@ -29,6 +29,25 @@ from backend.person_results import fetch_and_process_results
 
 app = Flask(__name__, static_folder="static")
 
+def format_seconds(x):
+
+    if pd.isna(x):
+        return ""
+
+    try:
+        x = int(float(x))
+    except:
+        return str(x)
+
+    h = x // 3600
+    m = (x % 3600) // 60
+    s = x % 60
+
+    if h:
+        return f"{h:02}:{m:02}:{s:02}"
+
+    return f"{m:02}:{s:02}"
+
 
 @app.route("/")
 def index():
@@ -48,6 +67,14 @@ def get_results():
         print(f"Fetching results for {first_name} {last_name}")
         best_results, all_results = fetch_and_process_results(first_name, last_name)
 
+        print("\nBEST:")
+        print(best_results.columns.tolist())
+        print(best_results.head())
+
+        print("\nALL:")
+        print(all_results.columns.tolist())
+        print(all_results.head())
+
         # Debug: Print column names to help diagnose the issue
         print("Best results columns:", best_results.columns.tolist())
         print("All results columns:", all_results.columns.tolist())
@@ -58,6 +85,16 @@ def get_results():
             try:
                 # Create a copy to avoid modifying the original
                 df = df.copy()
+
+                df.rename(columns={
+                    "date": "תאריך אירוע",
+                    "event_name": "שם מרוץ",
+                    "first_name": "שם פרטי",
+                    "last_name": "שם משפחה",
+                    "result": "תוצאה",
+                    "personal_time": "זמן אישי",
+                    "normalized_distance": "מקצה",
+                }, inplace=True)
 
                 required_columns = [
                     "תאריך אירוע",
@@ -75,7 +112,17 @@ def get_results():
 
                 # Combine 'תוצאה' and 'זמן אישי' into a single 'זמן' column
                 if "תוצאה" in df.columns and "זמן אישי" in df.columns:
-                    df["זמן"] = df["תוצאה"].fillna(df["זמן אישי"])
+                    time_col = pd.to_numeric(
+                        df["תוצאה"],
+                        errors="coerce"
+                    ).fillna(
+                        pd.to_numeric(
+                            df["זמן אישי"],
+                            errors="coerce"
+                        )
+                    )
+
+                    df["זמן"] = time_col.apply(format_seconds)
                 elif "תוצאה" in df.columns:
                     df["זמן"] = df["תוצאה"]
                 elif "זמן אישי" in df.columns:
@@ -83,6 +130,12 @@ def get_results():
                 else:
                     print("Warning: Neither 'תוצאה' nor 'זמן אישי' columns found")
                     df["זמן"] = ""  # Add empty time column to prevent errors
+
+                df["זמן"] = (
+                    df["תוצאה"]
+                    .fillna(df["זמן אישי"])
+                    .apply(format_seconds)
+                )
 
                 # Combine first and last name into a single column
                 if "שם פרטי" in df.columns and "שם משפחה" in df.columns:
@@ -94,22 +147,30 @@ def get_results():
                 # Initialize columns to show with required columns
                 columns_to_show = ["תאריך אירוע", "שם", "שם מרוץ"]
 
-                # Add מקצה column if available (from normalized_distance)
-                if "normalized_distance" in df.columns:
-                    df["מקצה"] = df["normalized_distance"]
-                    columns_to_show.append("מקצה")
-                elif "מקצה" in df.columns:
-                    # If normalized_distance doesn't exist but מקצה does, use that
-                    pass  # already in columns_to_show
+                # # Add מקצה column if available (from normalized_distance)
+                # if "normalized_distance" in df.columns:
+                #     df["מקצה"] = df["normalized_distance"]
+                #     columns_to_show.append("מקצה")
+                # elif "מקצה" in df.columns:
+                #     # If normalized_distance doesn't exist but מקצה does, use that
+                #     pass  # already in columns_to_show
 
-                # Remove the original distance column if it exists
-                if "מרחק" in df.columns:
-                    df = df.drop(columns=["מרחק"])
-                if "distance" in df.columns:
-                    df = df.drop(columns=["distance"])
+                # # Remove the original distance column if it exists
+                # if "מרחק" in df.columns:
+                #     df = df.drop(columns=["מרחק"])
+                # if "distance" in df.columns:
+                #     df = df.drop(columns=["distance"])
 
-                # Add time column
-                columns_to_show.append("זמן")
+                # # Add time column
+                # columns_to_show.append("זמן")
+
+                columns_to_show = [
+                    "תאריך אירוע",
+                    "שם",
+                    "שם מרוץ",
+                    "מקצה",
+                    "זמן",
+                ]
 
                 # Only include columns that exist in the DataFrame
                 existing_columns = [col for col in columns_to_show if col in df.columns]
