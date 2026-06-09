@@ -500,31 +500,38 @@ class best_race_results_per_participant:
 
     
     def fetch_best_result(self, first_name, last_name, category, years_back=5):
+        try:
+            full_name = f"{first_name} {last_name}"
 
-        full_name = f"{first_name} {last_name}"
+            results = self.engine.get_runner_results(full_name)
+            if not results:
+                safe_print(f"⚠️ No results for {full_name}")
+                return None
 
-        results = self.engine.get_runner_results(full_name)
-        if not results:
+            # df = pd.DataFrame(results)
+            df = pd.json_normalize(results)
+
+            df = self.engine.filter_by_years(df, years_back)
+            df = self.engine.filter_by_distance(df, category)
+
+            best = self.engine.pick_best_result(df)
+            if best is None:
+                f"⚠️ No results for {full_name} in last {years_back} years"
+                return None
+
+            best["שם פרטי"] = first_name
+            best["שם משפחה"] = last_name
+            # best["תוצאה מיטבית"] = str(pd.to_timedelta(best["best_time"], unit="s"))
+            best["תוצאה מיטבית"] = format_seconds(best["best_time"])
+            # print(f"==================== Best result for {first_name} {last_name}: {best['תוצאה מיטבית']}")
+            safe_print(f"🔍 Available results for {first_name} {last_name}: {best['תוצאה מיטבית']} in {category}")
+            best["הערה"] = "Best Result"
+
+            return best
+        except Exception as e:
+            safe_print(f"❌ Error fetching {first_name} {last_name}: {e}")
             return None
 
-        # df = pd.DataFrame(results)
-        df = pd.json_normalize(results)
-
-        df = self.engine.filter_by_years(df, years_back)
-        df = self.engine.filter_by_distance(df, category)
-
-        best = self.engine.pick_best_result(df)
-        if best is None:
-            return None
-
-        best["שם פרטי"] = first_name
-        best["שם משפחה"] = last_name
-        # best["תוצאה מיטבית"] = str(pd.to_timedelta(best["best_time"], unit="s"))
-        best["תוצאה מיטבית"] = format_seconds(best["best_time"])
-        print(f"==================== Best result for {first_name} {last_name}: {best['תוצאה מיטבית']}")
-        best["הערה"] = "Best Result"
-
-        return best
     
     # def fetch_best_result(
     #         self,

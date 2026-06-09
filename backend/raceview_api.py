@@ -33,6 +33,7 @@ from datetime import datetime
 import pandas as pd
 import json
 import requests
+from requests.exceptions import RequestException
 from urllib.parse import quote
 import urllib3
 
@@ -45,6 +46,9 @@ class RaceViewEngine:
 
     def get_runner_results(self, full_name):
         data = self.api.search_runner(full_name)
+        if not data:
+            return []
+
         return data.get("data", {}).get("results", [])
 
     def filter_by_years(self, df, years_back):
@@ -128,7 +132,7 @@ class RaceViewAPI:
 
         for url in urls:
 
-            print(f"\nTrying: {url}")
+            # print(f"\n[DEBUG] Trying: {url}")
 
             try:
                 response = requests.post(
@@ -139,8 +143,8 @@ class RaceViewAPI:
                     verify=False
                 )
 
-                print("STATUS:", response.status_code)
-                print(response.text[:500])
+                print(f"[DEBUG] STATUS: {response.status_code}")
+                # print(f"[DEBUG] RESPONSE: {response.text[:500]}")
 
                 if response.ok:
                     data = response.json()
@@ -151,12 +155,12 @@ class RaceViewAPI:
                         or data.get("access_token")
                     )
 
-                    print("TOKEN:", self.token)
+                    print(f"[DEBUG] TOKEN: {self.token}")
 
                     return self.token
 
             except Exception as e:
-                print(e)
+                print(f"[DEBUG] Exception: {e}")
 
         raise Exception("Could not login")
 
@@ -182,8 +186,8 @@ class RaceViewAPI:
                 f"{encoded_name}?token={self.token}"
             )
 
-            print("\nSEARCH URL:")
-            print(url)
+            # print("\nSEARCH URL:")
+            # print(url)
 
             response = requests.post(
                 url,
@@ -209,7 +213,11 @@ class RaceViewAPI:
             return data
         except RequestException as e:
             print(f"RaceView API failed for {full_name}: {e}")
-            return None
+            return {
+                "data": {
+                    "results": []
+                }
+            }
 
 
 if __name__ == "__main__":

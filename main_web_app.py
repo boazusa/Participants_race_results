@@ -39,49 +39,6 @@ app = Flask(__name__)
 
 HISTORY_FILE = "run_history.json"
 
-def format_seconds(value):
-    if pd.isna(value) or value == "":
-        return ""
-
-    # אם כבר בפורמט זמן
-    if isinstance(value, str) and ":" in value:
-        return value
-
-    try:
-        seconds = float(value)
-    except:
-        return ""
-
-    h = int(seconds // 3600)
-    m = int((seconds % 3600) // 60)
-    s = int(seconds % 60)
-
-    if h > 0:
-        return f"{h:02d}:{m:02d}:{s:02d}"
-    return f"{m:02d}:{s:02d}"
-
-def to_seconds(value):
-    if pd.isna(value):
-        return None
-
-    value = str(value).strip()
-
-    # case 01:05:54
-    if ":" in value:
-        parts = value.split(":")
-        parts = [int(p) for p in parts]
-        if len(parts) == 3:
-            h, m, s = parts
-            return h * 3600 + m * 60 + s
-        if len(parts) == 2:
-            m, s = parts
-            return m * 60 + s
-
-    # case 2116.66
-    try:
-        return float(value)
-    except:
-        return None
 
 def save_history(entry):
 
@@ -130,6 +87,28 @@ def load_history():
     return history
 
 
+def format_seconds(value):
+    if pd.isna(value) or value == "":
+        return ""
+
+    # if already in time format
+    if isinstance(value, str) and ":" in value:
+        return value
+
+    try:
+        seconds = float(value)
+    except:
+        return ""
+
+    h = int(seconds // 3600)
+    m = int((seconds % 3600) // 60)
+    s = int(seconds % 60)
+
+    if h > 0:
+        return f"{h:02d}:{m:02d}:{s:02d}"
+    return f"{m:02d}:{s:02d}"
+
+
 def clean_timedelta(td):
     if pd.isna(td):
         return ""
@@ -175,7 +154,7 @@ def index():
         )
 
         # scrape participants
-        participants_df = runner.scrape_participants_table()
+        _ = runner.scrape_participants_table()
 
         # Calculate birth year range from age range
         current_year = datetime.now().year
@@ -183,7 +162,7 @@ def index():
         max_year = current_year - min_age
 
         # filter names
-        names = runner.get_filtered_names(
+        _ = runner.get_filtered_names(
             min_year=min_year,
             max_year=max_year,
             gender=gender,
@@ -239,22 +218,15 @@ def index():
 
         # Load result to show top 10
         df = pd.read_excel(output_file)
-        # columns_to_show = [
-        #     "שם מרוץ",
-        #     "שם פרטי",
-        #     "שם משפחה",
-        #     "תאריך אירוע",
-        #     "תוצאה מיטבית",
-        #     "קטגוריה",
-        # ]
 
+        # ===== COLUMNS TO SHOW (GUI results table) =====
         columns_to_show = {
             "שם פרטי": "first_name",
             "שם משפחה": "last_name",
-            "שם מרוץ": "event_name",
+            "מרוץ": "event_name",
             "תאריך": "date",
-            "קטגוריה": "category",  # TODO: remove?
-            "מקצה": "race_name",
+            # "קטגוריה": "category",  # TODO: remove?
+            # "מקצה": "race_name",
             # "מרחק": "distance",
             "תוצאה": "result",
             # "זמן אישי": "personal_time",
@@ -264,17 +236,14 @@ def index():
         # ===== RESULTS STATS =====
 
         total_runners = len(df)
-        df = df.sort_values("result", ascending=True)
-        df["race_time"] = pd.to_timedelta(df["result"], errors="coerce")
 
+        # 1. Sort Values
+        df = df.sort_values("result", ascending=True)
+        # df["race_time"] = pd.to_timedelta(df["result"], errors="coerce")
+
+        # 2. Calculate Stats
         fastest_time = df["result"].min()
         avg_time = df["result"].mean()
-
-        print("* Fastest time:", fastest_time)
-        print("* Average time:", avg_time)
-
-        print("* Fastest time:", format_seconds(fastest_time))
-        print("* Average time:", format_seconds(avg_time))
 
         # Optional – time of place 10
         top3_cutoff = "N/A"
@@ -283,26 +252,15 @@ def index():
             if pd.notna(cutoff):
                 top3_cutoff = format_seconds(cutoff)
         
+        # 3. Format Results
         df["result"] = df["result"].apply(format_seconds)
 
-        # fastest_time = df["race_time"].min()
-        # avg_time = df["race_time"].mean()
-        
-        # print("Fastest time:", fastest_time)
-        # print("Average time:", avg_time)
+        print("* Fastest time:", format_seconds(fastest_time))
+        print("* Average time:", format_seconds(avg_time))
 
-        # print("Fastest time:", format_seconds(fastest_time))
-        # print("Average time:", format_seconds(avg_time))
-
-        # # Convert to clean strings
-        # fastest_time = clean_timedelta(fastest_time)
-        # avg_time = clean_timedelta(avg_time)
-
+        # 4. Format times for display (sec to h:m:s)
         fastest_time = format_seconds(fastest_time)
         avg_time = format_seconds(avg_time)
-
-        print("Fastest time:", fastest_time)
-        print("Average time:", avg_time)
 
         df_best = df[list(columns_to_show.values())]
         df_best.columns = list(columns_to_show.keys())
