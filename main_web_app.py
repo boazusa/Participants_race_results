@@ -144,6 +144,21 @@ def index():
         # Get years_back from URL parameter or form, default to 5
         years_back = int(request.args.get("years_back", request.form.get("years_back", 5)))
 
+        # ======= Clean up old Excel file if rerunning from history =======
+        edit_id = request.form.get("edit_id")
+        if edit_id:
+            history = load_history()
+            for run in history:
+                if run.get('id') == edit_id:
+                    old_file = run.get('file')
+                    if old_file and os.path.exists(old_file):
+                        try:
+                            os.remove(old_file)
+                            print(f"Deleted old Excel file: {old_file}")
+                        except Exception as e:
+                            print(f"Error deleting old file {old_file}: {e}")
+                    break
+
         # ======= Run your class =======
         # excel_path = f"excel/{datetime.now().strftime('%Y%m%d_%H%M%S')}_participants.xlsx"
         runner = best_race_results_per_participant(
@@ -349,7 +364,7 @@ def delete_history(row_id):
 
 """
  & C:/tools/Python/python.exe c:/Users/USER/Documents/Python/running_records/running_records_windsurf/flask_app.py
- python c:/Users/USER/Documents/Python/running_records/running_records_windsurf/flask_app.py 
+ python c:/Users/USER/Documents/Python/running_records/running_records_windsurf/main_web_app.py 
 """
 
 if __name__ == "__main__":

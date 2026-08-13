@@ -366,7 +366,7 @@ class best_race_results_per_participant:
             )
 
             # Also check normalized distance if no matches found
-            if not mask.any() and race_keyword in ["5K", "10K", "15K", "21K", "42K"]:
+            if not mask.any() and race_keyword in ["7K", "5K", "10K", "15K", "21K", "42K"]:
                 normalized_race = race_keyword
                 mask = (
                     df["מקצה"].apply(lambda x: str(self.normalize_distance(str(x))))
@@ -400,6 +400,7 @@ class best_race_results_per_participant:
         # Apply filters
         if race_keyword is not None:
             # Normalize the race keyword if it's a standard race category
+            # if race_keyword in ["7K", "5K", "10K", "15K", "21K", "42K"]:
             if race_keyword in ["5K", "10K", "15K", "21K", "42K"]:
                 mask = (
                     df["מקצה"].apply(lambda x: str(self.normalize_distance(str(x))))
@@ -485,6 +486,8 @@ class best_race_results_per_participant:
             return "15K"
         if "5" in s and "2" not in s:
             return "5K"
+        # if "7" in s and "2" not in s:
+        #     return "7K"
         return np.nan
 
     @staticmethod

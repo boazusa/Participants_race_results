@@ -485,6 +485,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                         <option value="10" selected>10K</option>
                         <option value="15">15K</option>
                         <option value="21">21K</option>
+                        <!-- <option value="7">7K</option> -->
                     </select>
                 </div>
 
@@ -655,6 +656,8 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                                 <input type="hidden" name="gender" value="{{ run.gender }}">
                                 <input type="hidden" name="race_keyword" value="{{ run.race_keyword }}">
                                 <input type="hidden" name="category" value="{{ run.category }}">
+                                <input type="hidden" name="years_back" value="{{ run.years_back }}">
+                                <input type="hidden" name="edit_id" value="{{ run.id }}">
 
                                 <button class="modern-btn run-again-btn" title="Run Again">
                                     <i class="fas fa-rotate"></i>
