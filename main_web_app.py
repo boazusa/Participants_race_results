@@ -243,7 +243,7 @@ def index():
             # "קטגוריה": "category",  # TODO: remove?
             # "מקצה": "race_name",
             # "מרחק": "distance",
-            "תוצאה": "result",
+            "תוצאה": "תוצאה מיטבית",
             # "זמן אישי": "personal_time",
             "קצב לק״מ": "pace_k"
         }
@@ -252,30 +252,23 @@ def index():
 
         total_runners = len(df)
 
-        # 1. Sort Values
-        df = df.sort_values("result", ascending=True)
-        # df["race_time"] = pd.to_timedelta(df["result"], errors="coerce")
+        # 1. Sort Values - use the numeric seconds column for accurate sorting
+        df = df.sort_values("תוצאה מיטבית_שניות", ascending=True)
 
-        # 2. Calculate Stats
-        fastest_time = df["result"].min()
-        avg_time = df["result"].mean()
+        # 2. Calculate Stats - use the formatted string for display
+        fastest_time = df["תוצאה מיטבית"].iloc[0]  # Already formatted
+        avg_time_seconds = df["תוצאה מיטבית_שניות"].mean()
+        avg_time = format_seconds(avg_time_seconds)
 
-        # Optional – time of place 10
+        # Optional – time of place 3
         top3_cutoff = "N/A"
         if len(df) >= 3:
-            cutoff = df["result"].iloc[2]
-            if pd.notna(cutoff):
-                top3_cutoff = format_seconds(cutoff)
-        
-        # 3. Format Results
-        df["result"] = df["result"].apply(format_seconds)
+            cutoff_seconds = df["תוצאה מיטבית_שניות"].iloc[2]
+            if pd.notna(cutoff_seconds):
+                top3_cutoff = format_seconds(cutoff_seconds)
 
-        print("* Fastest time:", format_seconds(fastest_time))
-        print("* Average time:", format_seconds(avg_time))
-
-        # 4. Format times for display (sec to h:m:s)
-        fastest_time = format_seconds(fastest_time)
-        avg_time = format_seconds(avg_time)
+        print("* Fastest time:", fastest_time)
+        print("* Average time:", avg_time)
 
         df_best = df[list(columns_to_show.values())]
         df_best.columns = list(columns_to_show.keys())
@@ -365,8 +358,29 @@ def delete_history(row_id):
 """
  & C:/tools/Python/python.exe c:/Users/USER/Documents/Python/running_records/running_records_windsurf/flask_app.py
  python c:/Users/USER/Documents/Python/running_records/running_records_windsurf/main_web_app.py 
+
+Close app:
+netstat -ano | findstr :5000
+Example:   TCP    127.0.0.1:5000         0.0.0.0:0              LISTENING       13072
+
+then:
+taskkill /PID <PID_#> /F
+taskkill /PID 13072 /F
+
+OR tasklist | findstr python
+Example:   python.exe                   15436 Console                    1     23,244 K
+
+Then:
+taskkill /PID <PID_#> /F
+taskkill /PID 15436 /F
 """
 
 if __name__ == "__main__":
     app.run(debug=True)
     # app.run(debug=True, port=5000)
+
+
+"""
+build exe:
+pyinstaller --onefile --icon=icon/app_icon.ico --add-data "templates;templates" --add-data "static;static" --add-data "backend;backend" --hidden-import flask --hidden-import pandas --hidden-import openpyxl --name="RaceAnalyzer" main_web_app.py
+"""

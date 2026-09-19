@@ -143,7 +143,7 @@ class RaceViewAPI:
                     verify=False
                 )
 
-                print(f"[DEBUG] STATUS: {response.status_code}")
+                # print(f"[DEBUG] STATUS: {response.status_code}")
                 # print(f"[DEBUG] RESPONSE: {response.text[:500]}")
 
                 if response.ok:
@@ -155,7 +155,7 @@ class RaceViewAPI:
                         or data.get("access_token")
                     )
 
-                    print(f"[DEBUG] TOKEN: {self.token}")
+                    # print(f"[DEBUG] TOKEN: {self.token}")
 
                     return self.token
 

@@ -524,9 +524,9 @@ class best_race_results_per_participant:
 
             best["שם פרטי"] = first_name
             best["שם משפחה"] = last_name
-            # best["תוצאה מיטבית"] = str(pd.to_timedelta(best["best_time"], unit="s"))
+            # Keep original numeric value for sorting, formatted string for display
             best["תוצאה מיטבית"] = format_seconds(best["best_time"])
-            # print(f"==================== Best result for {first_name} {last_name}: {best['תוצאה מיטבית']}")
+            best["תוצאה מיטבית_שניות"] = best["best_time"]  # Keep original seconds for accurate sorting
             safe_print(f"🔍 Available results for {first_name} {last_name}: {best['תוצאה מיטבית']} in {category}")
             best["הערה"] = "Best Result"
 
@@ -679,9 +679,8 @@ class best_race_results_per_participant:
         df_best = pd.DataFrame(best_results)
         df_best.reset_index(drop=True, inplace=True)
 
-        # תוצאה מיטבית sorting step
-        df_best["race_time"] = pd.to_timedelta(df_best["תוצאה מיטבית"], errors="coerce")
-        df_best = df_best.sort_values(by="race_time", ascending=True)
+        # Sort using the original numeric seconds value for accuracy
+        df_best = df_best.sort_values(by="תוצאה מיטבית_שניות", ascending=True)
 
         # Only save to Excel if excel_path is provided
         if self.excel_path:
