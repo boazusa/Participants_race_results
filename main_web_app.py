@@ -24,7 +24,7 @@ License: [boazusa@hotmail.com]
 ===============================================================================
 """
 
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify
 import pandas as pd
 import os
 from datetime import datetime
@@ -38,6 +38,7 @@ from backend.race_analyzer_new import (
 app = Flask(__name__)
 
 HISTORY_FILE = "run_history.json"
+progress_state = {"current_name": "", "step": 1}
 
 
 def save_history(entry):
@@ -159,6 +160,12 @@ def index():
                             print(f"Error deleting old file {old_file}: {e}")
                     break
 
+        # ======= Progress callback function =======
+        def update_progress(current_name, step):
+            global progress_state
+            progress_state["current_name"] = current_name
+            progress_state["step"] = step
+
         # ======= Run your class =======
         # excel_path = f"excel/{datetime.now().strftime('%Y%m%d_%H%M%S')}_participants.xlsx"
         runner = best_race_results_per_participant(
@@ -166,12 +173,17 @@ def index():
             race_name=race_name,
             excel_path=True,
             years_back=years_back,  # Filter to past N years only
+            progress_callback=update_progress
         )
 
         # scrape participants
+        progress_state["current_name"] = "Scraping participants..."
+        progress_state["step"] = 1
         _ = runner.scrape_participants_table()
 
         # Calculate birth year range from age range
+        progress_state["current_name"] = "Filtering names..."
+        progress_state["step"] = 2
         current_year = datetime.now().year
         min_year = current_year - max_age
         max_year = current_year - min_age
@@ -185,7 +197,13 @@ def index():
         )
 
         # compute best results
+        progress_state["current_name"] = "Calculating best results..."
+        progress_state["step"] = 3
         runner.best_results_for_category(category)
+
+        # Reset progress state
+        progress_state["current_name"] = ""
+        progress_state["step"] = 1
 
         # Find newly generated file (last Excel file created)
         excel_files = sorted(
@@ -270,12 +288,13 @@ def index():
         print("* Fastest time:", fastest_time)
         print("* Average time:", avg_time)
 
-        df_best = df[list(columns_to_show.values())]
+        df_best = df[list(columns_to_show.values())].copy()
         df_best.columns = list(columns_to_show.keys())
 
         print(df_best)
 
-        df_best.rename(columns={
+        # Only rename columns that exist
+        rename_dict = {
             "event_name": "שם מרוץ",
             "date": "תאריך אירוע",
             "category": "קטגוריה",
@@ -286,9 +305,16 @@ def index():
             "pace_k": "קצב לק״מ",
             "first_name": "שם פרטי",
             "last_name": "שם משפחה"
-        }, inplace=True)
-        
-        top10 = df_best.head(10).to_html(classes="table table-striped", index=False)
+        }
+        # Filter to only rename columns that actually exist
+        existing_rename = {k: v for k, v in rename_dict.items() if k in df_best.columns}
+        df_best = df_best.rename(columns=existing_rename)
+
+        if df_best is None or df_best.empty:
+            safe_print("⚠️ No results to display")
+            top10 = "<p>No results found</p>"
+        else:
+            top10 = df_best.head(10).to_html(classes="table table-striped", index=False)
 
         history = load_history()
 
@@ -353,6 +379,11 @@ def delete_history(row_id):
         json.dump(history, f, ensure_ascii=False, indent=4)
 
     return {"success": True}
+
+
+@app.route("/progress")
+def progress():
+    return jsonify(progress_state)
 
 
 """

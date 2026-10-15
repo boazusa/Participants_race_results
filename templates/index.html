@@ -118,6 +118,41 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             color: #f5f5f5;
         }
         {% endif %}
+
+        .age-presets {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            flex-wrap: nowrap;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .preset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .preset-btn:active {
+            background-color: #495057;
+        }
+
+        #current-name {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #007bff;
+            font-weight: 600;
+        }
     </style>
 
     <script>
@@ -133,6 +168,12 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
         let loadingStartTime;
         let overlayTimerInterval;
         let overlayStartTime;
+        let progressInterval;
+
+        function setAgeRange(min, max) {
+            document.getElementById('min_age').value = min;
+            document.getElementById('max_age').value = max;
+        }
 
         function setLoadingStep(stepNumber) {
             const steps = [
@@ -188,6 +229,24 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                 }, 100);
             }
 
+            // Start polling for progress
+            progressInterval = setInterval(function() {
+                fetch('/progress')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.current_name) {
+                            const nameEl = document.getElementById("current-name");
+                            if (nameEl) {
+                                nameEl.textContent = "Processing: " + data.current_name;
+                            }
+                        }
+                        if (data.step) {
+                            setLoadingStep(data.step);
+                        }
+                    })
+                    .catch(err => console.log('Progress poll error:', err));
+            }, 500);
+
             // Show pseudo progress steps while processing
             setLoadingStep(1);
             setTimeout(function () { setLoadingStep(2); }, 1500);
@@ -197,7 +256,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             const progressBar = document.getElementById("progress-fill");
             const stepText = document.getElementById("overlay-step");
 
-            let progressInterval = setInterval(function () {
+            let overlayProgressInterval = setInterval(function () {
 
                 progress += 1;
 
@@ -463,15 +522,22 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                 <h4>Filters</h4>
 
                 <div class="grid-2">
-                    <input type="number" name="min_age"
+                    <input type="number" name="min_age" id="min_age"
                            class="modern-input"
                            placeholder="Min Age" value="40"
                            title="Minimum age of participants to include">
 
-                    <input type="number" name="max_age"
+                    <input type="number" name="max_age" id="max_age"
                            class="modern-input"
                            placeholder="Max Age" value="49"
                            title="Maximum age of participants to include">
+                </div>
+
+                <div class="age-presets">
+                    <button type="button" class="preset-btn" onclick="setAgeRange(30, 39)">30-39</button>
+                    <button type="button" class="preset-btn" onclick="setAgeRange(40, 49)">40-49</button>
+                    <button type="button" class="preset-btn" onclick="setAgeRange(50, 59)">50-59</button>
+                    <button type="button" class="preset-btn" onclick="setAgeRange(18, 59)">18-59</button>
                 </div>
 
                 <div class="grid-2">
@@ -519,6 +585,8 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             Elapsed time:
             <span id="loading-seconds">0.0</span>s
         </div>
+
+        <div id="current-name"></div>
 
         <div class="mt-2">
             <div id="loading-step-1" class="loading-step">

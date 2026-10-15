@@ -1,0 +1,83 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cursor/
+.codeium/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project specific
+excel/
+*.xlsx
+*.xls
+*.csv
+login_info/
+*.ini
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Backup files
+backup_*.py
+*.bak
+*.backup
+
+# Downloads
+Downloads/
+downloads/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Flask
+instance/
+.webassets-cache
+
+# Database
+*.db
+*.sqlite
+*.sqlite3

@@ -110,13 +110,14 @@ def format_seconds(value):
 
 
 class best_race_results_per_participant:
-    def __init__(self, url, race_name=None, excel_path=None, years_back=5):
+    def __init__(self, url, race_name=None, excel_path=None, years_back=5, progress_callback=None):
         """
         :param url:
         :param excel_path:
         Parameters:
         - self.url: the page URL containing the participants table
         - self.excel_path: path to Excel or CSV file
+        - progress_callback: function to call with progress updates (current_name, step)
         """
         self.url = url.replace("view-source:", "")
         self.excel_path = excel_path
@@ -126,6 +127,7 @@ class best_race_results_per_participant:
         self.output_file = ""
         self.participants_table_df = None
         self.years_back = years_back
+        self.progress_callback = progress_callback
 
         # Create excel directory if it doesn't exist
         excel_dir = "excel"
@@ -212,7 +214,7 @@ class best_race_results_per_participant:
         # Create DataFrame
         df = pd.DataFrame(rows, columns=table_headers)
 
-        print(f"Found {len(df)} participants registered to this race.")
+        print(f"*** Found {len(df)} participants registered to this race. ***")
 
         return df
 
@@ -279,32 +281,109 @@ class best_race_results_per_participant:
         if drop_first_col and df.shape[1] > 0:
             df = df.iloc[:, 1:]
 
-        print(f"Found {len(df)} participants registered to this race.")
+        print(f"*** Found {len(df)} participants registered to this race. ***")
 
         return df
 
     def scrape_modiin_participants_table(self):
-        # Get the HTML
-        response = requests.get(self.url)
-        response.encoding = "utf-8"  # ensure Hebrew text is read properly
-        response.raise_for_status()
+        # Check if URL is a local file
+        if self.url.startswith("file://"):
+            # Read from local file
+            file_path = self.url.replace("file://", "").replace("%20", " ")
+            # Handle Windows paths that might start with /C:/ or C:/
+            if file_path.startswith("/"):
+                file_path = file_path[1:]
+            safe_print(f"📂 Reading from local file: {file_path}")
+            with open(file_path, "r", encoding="utf-8") as f:
+                html_content = f.read()
+        else:
+            # Get the HTML from URL - use urllib instead of requests to avoid Flask SSL issues
+            import urllib.request
+            import ssl
 
-        # Parse HTML
-        soup = BeautifulSoup(response.text, "html.parser")
+            try:
+                # Create SSL context that doesn't verify
+                ssl_context = ssl.create_default_context()
+                ssl_context.check_hostname = False
+                ssl_context.verify_mode = ssl.CERT_NONE
 
-        # Find all table rows
+                # Create request with headers
+                url_to_fetch = self.url.replace("https://", "http://")
+                req = urllib.request.Request(
+                    url_to_fetch,
+                    headers={
+                        "User-Agent": (
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                            "AppleWebKit/537.36 (KHTML, like Gecko) "
+                            "Chrome/130.0.0.0 Safari/537.36"
+                        ),
+                        "Accept": "*/*",
+                    }
+                )
+
+                # Open with SSL context
+                with urllib.request.urlopen(req, timeout=45, context=ssl_context) as response:
+                    html_content = response.read().decode("utf-8", errors="replace")
+            except Exception as e:
+                safe_print(f"❌ Failed to fetch Modiin page: {e}")
+                safe_print("💡 Try saving the page manually (right-click -> Save As) and use file://")
+                raise
+
+        # Parse HTML - use regex for extremely malformed HTML
+        import re
+        import html
+
+        # Check if this is a view-source format (browser's syntax-highlighted view)
+        if 'line-content' in html_content and 'line-number' in html_content:
+            safe_print("🔍 Detected view-source format, extracting real HTML...")
+            # Extract the actual HTML from line-content cells
+            line_pattern = r'<td class="line-content"[^>]*>(.*?)</td>'
+            lines = re.findall(line_pattern, html_content, re.DOTALL)
+            # Join lines and unescape HTML entities
+            html_content = ''
+            for line in lines:
+                # Remove span tags used for syntax highlighting
+                line = re.sub(r'<span[^>]*>(.*?)</span>', r'\1', line)
+                # Unescape HTML entities
+                line = html.unescape(line)
+                html_content += line
+            safe_print(f"✅ Extracted {len(html_content)} characters of real HTML")
+
+        # Find all <TR> blocks - more flexible with whitespace
+        tr_pattern = r'<TR[^>]*>(.*?)</TR>'
+        tr_blocks = re.findall(tr_pattern, html_content, re.DOTALL | re.IGNORECASE)
+
+        safe_print(f"🔍 Found {len(tr_blocks)} TR blocks using regex")
+
+        # Extract td content from each TR block
         rows = []
-        for tr in soup.find_all("tr"):
-            cells = [
-                td.get_text(strip=True).replace("\xa0", " ") for td in tr.find_all("td")
-            ]
-            if cells:
-                rows.append(cells)
+        for i, tr_block in enumerate(tr_blocks):
+            # Find all <td>...</td> tags (case insensitive, more flexible)
+            td_pattern = r'<td[^>]*>(.*?)</td>'
+            tds = re.findall(td_pattern, tr_block, re.IGNORECASE | re.DOTALL)
+
+            # Clean up td content
+            cleaned_tds = []
+            for td in tds:
+                # Remove HTML entities and extra whitespace
+                clean = td.replace("&quot;", '"').replace("&nbsp;", " ").replace("&lt;", "<").replace("&gt;", ">")
+                clean = re.sub(r'<[^>]+>', '', clean)  # Remove any remaining HTML tags
+                clean = clean.strip()
+                cleaned_tds.append(clean)
+
+            # Only add rows with exactly 6 columns
+            if len(cleaned_tds) == 6:
+                rows.append(cleaned_tds)
+            elif i < 3 and cleaned_tds:
+                safe_print(f"⚠️ Row {i} has {len(cleaned_tds)} columns, skipping")
+
+        safe_print(f"✅ Extracted {len(rows)} valid rows")
+
+        # Use hardcoded headers
+        headers = ["שם פרטי", "שם משפחה", "שנת לידה", "מגדר", "מקצה", "קבוצה"]
 
         # Convert to DataFrame
-        df = pd.DataFrame(
-            rows, columns=["שם פרטי", "שם משפחה", "שנת לידה", "מגדר", "מקצה", "קבוצה"]
-        )
+        df = pd.DataFrame(rows, columns=headers)
 
         # Normalize gender column
         for gender_col in ["מגדר", "מין"]:
@@ -315,7 +394,7 @@ class best_race_results_per_participant:
                     .str.strip()
                 )
 
-        print(f"Found {len(df)} participants registered to this race.")
+        print(f"*** Found {len(df)} participants registered to this race. ***")
 
         return df
 
@@ -325,7 +404,7 @@ class best_race_results_per_participant:
             df = self.scrape_realtiming_participants_table()
         elif "3plus.co.il" in url_lower or "shvoong" in url_lower or "ashkelon.runisrael.org.il" in url_lower:
             df = self.scrape_3plus_participants_table()
-        elif "modiin" in url_lower:
+        elif "modiin" in url_lower or "מודיעין" in self.url or "file://" in url_lower:
             df = self.scrape_modiin_participants_table()
         else:
             raise ValueError("Unknown event URL")
@@ -505,6 +584,10 @@ class best_race_results_per_participant:
     def fetch_best_result(self, first_name, last_name, category, years_back=5):
         try:
             full_name = f"{first_name} {last_name}"
+
+            # Update progress
+            if self.progress_callback:
+                self.progress_callback(full_name, 3)
 
             results = self.engine.get_runner_results(full_name)
             if not results:
