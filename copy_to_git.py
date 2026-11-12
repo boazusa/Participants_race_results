@@ -79,13 +79,19 @@ def copy_project():
     files_copied = 0
     files_skipped = 0
     dirs_created = 0
+    skipped_files = []
+    skipped_dirs = []
 
     for root, dirs, files in os.walk(SOURCE_DIR):
         # Get relative path
         rel_path = Path(root).relative_to(SOURCE_DIR)
 
-        # Skip excluded directories
+        # Track skipped directories
+        original_dirs = dirs.copy()
         dirs[:] = [d for d in dirs if not should_exclude(root, d)]
+        for d in original_dirs:
+            if d not in dirs:
+                skipped_dirs.append(str(rel_path / d))
 
         # Create destination directory
         dest_root = DEST_DIR / rel_path
@@ -97,6 +103,7 @@ def copy_project():
         for file in files:
             if should_exclude(root, file):
                 files_skipped += 1
+                skipped_files.append(str(rel_path / file))
                 continue
 
             src_file = Path(root) / file
@@ -110,6 +117,16 @@ def copy_project():
     print(f"   Files skipped: {files_skipped}")
     print(f"   Directories created: {dirs_created}")
     print(f"\n📁 Destination: {DEST_DIR}")
+
+    if skipped_dirs:
+        print(f"\n📁 Skipped directories ({len(skipped_dirs)}):")
+        for d in sorted(skipped_dirs):
+            print(f"   - {d}")
+
+    if skipped_files:
+        print(f"\n📋 Skipped files ({len(skipped_files)}):")
+        for f in sorted(skipped_files):
+            print(f"   - {f}")
 
 if __name__ == "__main__":
     copy_project()

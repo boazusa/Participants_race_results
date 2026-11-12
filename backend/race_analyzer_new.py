@@ -10,7 +10,7 @@ Author: Boaz Bilgory
 Email: boazusa@hotmail.com
 Organization: self
 Created: 15/11/2025
-Last Modified: 04/03/2025
+Last Modified: 10/28/2026
 Version: 1.0.1
 Python Version: 3.8+
 Dependencies:
@@ -218,9 +218,9 @@ class best_race_results_per_participant:
 
         return df
 
-    def scrape_realtiming_participants_table(self, drop_first_col=True):
+    def scrape_realtiming_participants_table_old(self, drop_first_col=True):
         """
-        Scrape the participants table from a RealTiming event page and return it as a pandas DataFrame.
+        OLD METHOD: Scrape the participants table from a RealTiming event page (HTML table format).
 
         self.url : str
             The event page URL (e.g. https://www.realtiming.co.il/events/1242/list)
@@ -284,6 +284,115 @@ class best_race_results_per_participant:
         print(f"*** Found {len(df)} participants registered to this race. ***")
 
         return df
+
+    def scrape_realtiming_participants_table_new(self, drop_first_col=True):
+        """
+        NEW METHOD: Scrape the participants table from a RealTiming event page (new HTML table format).
+
+        This method handles the new beta design that uses HTML tables with class "roster-table".
+
+        self.url : str
+            The event page URL (e.g. https://www.realtiming.co.il/events/lehavim-2026/list)
+        Parameters:
+        ----------
+        drop_first_col : bool, optional
+            If True, removes the first column (often just a running index).
+
+        Returns:
+        -------
+        pandas.DataFrame
+        """
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/119.0.0.0 Safari/537.36"
+            )
+        }
+
+        # Add ?all=1 parameter to get all participants (new format paginates by default)
+        url = self.url
+        if "all=1" not in url:
+            separator = "&" if "?" in url else "?"
+            url = f"{url}{separator}all=1"
+
+        # Request page content
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Find the roster table (new format uses class "roster-table")
+        table = soup.find("table", class_="roster-table")
+        if not table:
+            raise ValueError("No roster-table found in the new format.")
+
+        # Extract headers
+        headers_row = [
+            th.get_text(strip=True) for th in table.find("thead").find_all("th")
+        ]
+
+        # Extract data rows
+        rows = []
+        tbody = table.find("tbody")
+        if tbody:
+            for tr in tbody.find_all("tr"):
+                row = [td.get_text(strip=True) for td in tr.find_all("td")]
+                if row:  # Only add non-empty rows
+                    rows.append(row)
+
+        # Build DataFrame
+        df = pd.DataFrame(rows, columns=headers_row)
+
+        if "מין" in df.columns:
+            df = df.rename(columns={"מין": "מגדר"})
+
+        # Normalize gender column - new format uses "זכר" and "נקבה"
+        for gender_col in ["מגדר", "מין"]:
+            if gender_col in df.columns:
+                df[gender_col] = (
+                    df[gender_col]
+                    .replace({"זכר": "male", "נקבה": "female", "ז": "male", "נ": "female"})
+                    .str.strip()
+                )
+
+        # Drop the first column if requested
+        if drop_first_col and df.shape[1] > 0:
+            df = df.iloc[:, 1:]
+
+        print(f"*** Found {len(df)} participants registered to this race (new format). ***")
+
+        return df
+
+    def scrape_realtiming_participants_table(self, drop_first_col=True):
+        """
+        Scrape the participants table from a RealTiming event page and return it as a pandas DataFrame.
+        Attempts the new format first, falls back to the old format if it fails.
+
+        self.url : str
+            The event page URL (e.g. https://www.realtiming.co.il/events/1242/list)
+        self.excel_path : str, optional
+            Path to save the resulting DataFrame as an Excel file.
+        Parameters:
+        ----------
+        drop_first_col : bool, optional
+            If True, removes the first column (often just a running index).
+
+        Returns:
+        -------
+        pandas.DataFrame
+        """
+        try:
+            # Try new format first (beta design)
+            safe_print("Trying new RealTiming format...")
+            return self.scrape_realtiming_participants_table_new(drop_first_col=drop_first_col)
+        except Exception as e:
+            safe_print(f"New format failed: {e}")
+            safe_print("Falling back to old RealTiming format...")
+            try:
+                return self.scrape_realtiming_participants_table_old(drop_first_col=drop_first_col)
+            except Exception as e2:
+                safe_print(f"Old format also failed: {e2}")
+                raise ValueError("Could not scrape participants table with either format.")
 
     def scrape_modiin_participants_table(self):
         # Check if URL is a local file

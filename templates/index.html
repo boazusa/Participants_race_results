@@ -153,6 +153,18 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             color: #007bff;
             font-weight: 600;
         }
+
+        .loading-participant {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            min-height: 20px;
+        }
+
+        #overlay-participant-name {
+            color: #007bff;
+            font-weight: 500;
+        }
     </style>
 
     <script>
@@ -238,6 +250,10 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                             const nameEl = document.getElementById("current-name");
                             if (nameEl) {
                                 nameEl.textContent = "Processing: " + data.current_name;
+                            }
+                            const overlayNameEl = document.getElementById("overlay-participant-name");
+                            if (overlayNameEl) {
+                                overlayNameEl.textContent = data.current_name;
                             }
                         }
                         if (data.step) {
@@ -778,6 +794,10 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
         <div class="loading-time">
             ⏱ <span id="overlay-time">0.0</span> seconds
+        </div>
+
+        <div class="loading-participant">
+            <span id="overlay-participant-name"></span>
         </div>
 
         <div class="loading-progress-bar">
