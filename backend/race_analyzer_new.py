@@ -694,13 +694,12 @@ class best_race_results_per_participant:
         try:
             full_name = f"{first_name} {last_name}"
 
-            # Update progress
-            if self.progress_callback:
-                self.progress_callback(full_name, 3)
-
             results = self.engine.get_runner_results(full_name)
             if not results:
-                safe_print(f"⚠️ No results for {full_name}")
+                safe_print(f"No results for {full_name}")
+                # Update progress with "No results" message
+                if self.progress_callback:
+                    self.progress_callback(f"{full_name} - No results", 3)
                 return None
 
             # df = pd.DataFrame(results)
@@ -711,7 +710,10 @@ class best_race_results_per_participant:
 
             best = self.engine.pick_best_result(df)
             if best is None:
-                f"⚠️ No results for {full_name} in last {years_back} years"
+                f"No results for {full_name} in last {years_back} years"
+                # Update progress with "No results" message
+                if self.progress_callback:
+                    self.progress_callback(f"{full_name} - No results", 3)
                 return None
 
             best["שם פרטי"] = first_name
@@ -719,12 +721,19 @@ class best_race_results_per_participant:
             # Keep original numeric value for sorting, formatted string for display
             best["תוצאה מיטבית"] = format_seconds(best["best_time"])
             best["תוצאה מיטבית_שניות"] = best["best_time"]  # Keep original seconds for accurate sorting
-            safe_print(f"🔍 Available results for {first_name} {last_name}: {best['תוצאה מיטבית']} in {category}")
+            safe_print(f"Available results for {first_name} {last_name}: {best['תוצאה מיטבית']} in {category}")
             best["הערה"] = "Best Result"
+
+            # Update progress with name and time
+            if self.progress_callback:
+                self.progress_callback(f"{full_name} - {best['תוצאה מיטבית']}", 3)
 
             return best
         except Exception as e:
-            safe_print(f"❌ Error fetching {first_name} {last_name}: {e}")
+            safe_print(f"Error fetching {first_name} {last_name}: {e}")
+            # Update progress with error message
+            if self.progress_callback:
+                self.progress_callback(f"{first_name} {last_name} - Error", 3)
             return None
 
     

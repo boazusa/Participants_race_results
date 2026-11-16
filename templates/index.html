@@ -158,12 +158,20 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
             margin-top: 15px;
             font-size: 14px;
             color: #666;
-            min-height: 20px;
+            min-height: 40px;
         }
 
         #overlay-participant-name {
             color: #007bff;
             font-weight: 500;
+            font-size: 15px;
+        }
+
+        #overlay-participant-time {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 5px;
         }
     </style>
 
@@ -246,14 +254,59 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
                 fetch('/progress')
                     .then(response => response.json())
                     .then(data => {
+                        console.log('Progress data:', data);
                         if (data.current_name) {
                             const nameEl = document.getElementById("current-name");
                             if (nameEl) {
                                 nameEl.textContent = "Processing: " + data.current_name;
                             }
+
+                            // Parse name and time from the format "Name - Time" or "Name - No results"
+                            const parts = data.current_name.split(" - ");
+                            const name = parts[0];
+                            const time = parts.length > 1 ? parts[1] : "";
+
+                            console.log('Parsed - Name:', name, 'Time:', time);
+
+                            // Update regular loading display
+                            const timeEl = document.getElementById("current-time");
+                            if (timeEl) {
+                                if (time && time !== "No results" && time !== "Error") {
+                                    timeEl.textContent = time;
+                                    timeEl.style.color = "#28a745";
+                                } else if (time === "No results") {
+                                    timeEl.textContent = "No results";
+                                    timeEl.style.color = "#dc3545";
+                                } else if (time === "Error") {
+                                    timeEl.textContent = "Error";
+                                    timeEl.style.color = "#dc3545";
+                                } else {
+                                    timeEl.textContent = "";
+                                }
+                            }
+
+                            // Update overlay display
                             const overlayNameEl = document.getElementById("overlay-participant-name");
                             if (overlayNameEl) {
-                                overlayNameEl.textContent = data.current_name;
+                                overlayNameEl.textContent = name;
+                            }
+
+                            const overlayTimeEl = document.getElementById("overlay-participant-time");
+                            if (overlayTimeEl) {
+                                if (time && time !== "No results" && time !== "Error") {
+                                    overlayTimeEl.textContent = time;
+                                    overlayTimeEl.style.color = "#28a745"; // Green for valid times
+                                } else if (time === "No results") {
+                                    overlayTimeEl.textContent = "No results";
+                                    overlayTimeEl.style.color = "#dc3545"; // Red for no results
+                                } else if (time === "Error") {
+                                    overlayTimeEl.textContent = "Error";
+                                    overlayTimeEl.style.color = "#dc3545"; // Red for errors
+                                } else {
+                                    overlayTimeEl.textContent = "";
+                                }
+                            } else {
+                                console.log('overlayTimeEl not found!');
                             }
                         }
                         if (data.step) {
@@ -603,6 +656,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
         </div>
 
         <div id="current-name"></div>
+        <div id="current-time" style="margin-top: 5px; font-weight: 600; color: #28a745;"></div>
 
         <div class="mt-2">
             <div id="loading-step-1" class="loading-step">
@@ -798,6 +852,7 @@ Performance: Lightweight UI; heavy work is delegated to the Flask backend.
 
         <div class="loading-participant">
             <span id="overlay-participant-name"></span>
+            <div id="overlay-participant-time"></div>
         </div>
 
         <div class="loading-progress-bar">
